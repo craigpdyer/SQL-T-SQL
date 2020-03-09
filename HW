@@ -1,0 +1,3117 @@
+declare @star varchar(300) = '*'
+declare @outtercount int=10
+declare @innercoutn int =10
+
+declare @size int = 10
+
+
+
+
+while (@outtercount-1 !=0)
+begin
+
+                while(@innercoutn!=0)
+                        begin
+
+
+
+                                set @star = REPLICATE(' ',@innercoutn) + REPLICATE(' * ',@size -
+@innercoutn)
+                                print @star
+
+                        set @innercoutn =@innercoutn -1
+                end
+        --print @star
+
+        set @star = '*'
+
+        set @outtercount = @outtercount -9
+        --set @innercoutn = @outtercount
+end
+- Hide quoted text -
+
+
+On 1/24/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+> /*declare @cnt int = 1
+>
+>
+>
+> ;with ctetest
+> as
+>
+> common table expression 1/23/2019
+>
+>
+> (
+> select 1 as n
+>
+> union all
+>
+> select n=n+1 from ctetest where n<122
+>
+> )
+>
+> select* from ctetest
+> option(MAXRECURSION 1000)
+>
+>
+> print
+>
+> ;with ctealp(num, alp)
+> as
+> (
+>
+>
+>     select 65 as num, char(65) as alp
+>
+>     union all
+>
+>     select num= num+1, char(num+1) from ctealp
+>     where num <95
+> )
+>
+> select alp from ctealp
+>
+>
+>
+>
+>
+>
+> ;with CTE(SPID, YEAR, TotalSales)
+> as
+> (
+> select SalespersonID,year(orderdate) as 'Year', SUM(totalDue) as TotalSale
+> from sales.SalesOrderHeader as SOH
+> where SalesPersonID is not null
+> group by SalespersonID, year(orderdate)
+>
+>
+> )
+>
+>  select *, (select sum(totalSales) from cte as cte1 where cte1.YEAR =
+> CTE2.YEAR) as TotalSales  from CTE as cte2
+>  order by cte2.totalsales
+>  */
+>  /*
+> CREATE TABLE dbo.MyEmployees
+> (
+> EmployeeID smallint NOT NULL,
+> FirstName nvarchar(30)  NOT NULL,
+> LastName  nvarchar(40) NOT NULL,
+> Title nvarchar(50) NOT NULL,
+> DeptID smallint NOT NULL,
+> ManagerID int NULL,
+>  CONSTRAINT PK_EmployeeID PRIMARY KEY CLUSTERED (EmployeeID ASC)
+> );
+> -- Populate the table with values.
+> INSERT INTO dbo.MyEmployees VALUES
+>  (1, N'Ken', N'Sánchez', N'Chief Executive Officer',16,NULL)
+> ,(273, N'Brian', N'Welcker', N'Vice President of Sales',3,1)
+> ,(274, N'Stephen', N'Jiang', N'North American Sales Manager',3,273)
+> ,(275, N'Michael', N'Blythe', N'Sales Representative',3,274)
+> ,(276, N'Linda', N'Mitchell', N'Sales Representative',3,274)
+> ,(285, N'Syed', N'Abbas', N'Pacific Sales Manager',3,273)
+> ,(286, N'Lynn', N'Tsoflias', N'Sales Representative',3,285)
+> ,(16,  N'David',N'Bradley', N'Marketing Manager', 4, 273)
+> ,(23,  N'Mary', N'Gibson', N'Marketing Specialist', 4, 16);
+>
+> select * from dbo.MyEmployees
+>
+>
+>
+> ;with cte
+> as
+> (
+> select EmployeeID, managerID, 0 as 'Level' from MyEmployees
+> where ManagerID is null
+>
+> union all
+>
+> select e.EmployeeID, e.managerID, level+1 from MyEmployees as e
+> inner join CTE as C on C.EmployeeID = e.ManagerID
+>
+> )
+>
+> select*from cte
+> */
+>
+>
+> /*
+> ;with repeatingMessage(Message,Length) as
+> (Select Message=cast('I LIKE' as varchar(300)),   --
+>             len('I Like')
+>             ---- ancher member
+> UNION ALL
+> --- recursive member
+> SELECT cast(Message+'SQL Server!' as varchar(300)),    --2 row
+>             len(message) from repeatingMessage  --
+> where Length<300)  -- select message,length
+> from repeatingMessage
+>
+>
+> */
+>
+> /*
+> Use Test_DB
+>
+>
+>
+> Create Procedure sp_emp_Data as
+> select jobtitle, gender,firstname,lastname from
+> AdventureWorks2012.HumanResources.employee as em
+> inner join AdventureWorks2012.person.person as pp on pp.businessEntityID
+> =em.businessentityID
+>
+> exec sp_emp_Data
+>
+> drop proc  sp_emp_data
+>
+>
+> select* from AdventureWorks2012.person.person
+> select* from AdventureWorks2012.HumanResources.employee
+>
+>
+>
+> select object_ID('temp.dbo.#testTable')
+>
+> go
+> Create proc sp_temp_table as
+>
+> if object_ID('temp.dbo.#testTable') is not null
+>     drop table #testTable
+>
+> else
+>     create table #TestTable
+>     (id int, name varchar(50) )
+>
+>
+>
+> go
+>
+> create proc sp_input_test(@emp int) as
+>     select jobtitle
+>     from AdventureWorks2012.HumanResources.Employee
+>     where BusinessEntityID = @emp
+>
+> exec Sp_input_test 12
+>
+> go
+>
+>
+> create proc sp_output_test (@id int, @job varchar(100) out) as
+> select @Job = jobtitle
+> from AdventureWorks2012.HumanResources.Employee
+> where BusinessEntityID = @ID
+>
+>
+>
+> declare @title varchar(100)
+> exec sp_output_test 12,@title out
+> print @title
+>
+>
+> go
+>
+> create Proc sp_default_test (@PID int = null, @lname varchar(50)=null)
+> as
+> begin
+>     if @PID is not null and  @lname is null
+>         select FirstName + ' ' + lastname as 'Name', Title
+>         from AdventureWorks2012.person.person
+>         where BusinessEntityID =@PID
+>     Else if @PID is null and  @lname is not null
+>         select FirstName + ' ' + lastname as 'Name', Title
+>         from AdventureWorks2012.person.person
+>         where lastname =@Lname
+>     Else if @PID is not null and @Lname is not null
+>         Select FirstName + ' ' + lastname as 'Name', Title
+>         from AdventureWorks2012.person.person
+>         where BusinessEntityID =@PID and
+>         LastName = @Lname
+>     else
+>         Print 'please Provide ID or Last Name.'
+> end
+>
+>
+>
+> Exec sp_default_test @lname = 'degrasse'
+> Exec sp_default_test
+> Exec sp_default_test 11, 'Cracium'
+>
+> */
+>
+> /*
+> alter proc sp_output_test  (@id int, @job varchar(100) out) as
+> select @Job = jobtitle
+> from AdventureWorks2012.HumanResources.Employee
+> where BusinessEntityID = @ID
+>
+>
+> Create Proc sp_test with recompile as
+> select*from
+>
+>
+> Exec sp_recompile sp_output_test
+>
+>
+>
+> create proc usp_myproc
+> as
+> begin
+>
+> select * from AdventureWorks2012.HumanResources.employee
+>
+>
+> end
+>
+>
+> alter proc usp_myproc(@output int out, @input1 int =4, @input2 int =4)
+> as
+> begin
+>
+> select * from AdventureWorks2012.HumanResources.employee
+> where BusinessEntityID = @input1 +@input2
+> set @output = @input1 +@input2
+> return @output
+>
+> end
+>
+>
+> declare @print int
+> declare @ans int
+>
+> exec usp_myproc @print
+> print @print
+>
+>
+>
+>
+>
+> alter proc Craig_sp ( @result bigint out, @num1 int, @num2 int)
+> as
+>     begin
+>             set @result = power(@num1,@num2)
+>
+>
+>     end
+> declare @result bigint
+> exec Craig_sp @result out,  3,4
+> print @result
+>
+>
+>
+>
+> Alter  proc pale_sp(@word varchar(300))
+> as
+> begin
+> Declare @wordcpy varchar(300)=@word
+> Declare @revword varchar(300)=''
+>
+>
+>     while (0 < len(@word))
+>         begin
+>         set @revword = @revword + right(@word,1)
+>         set @word = substring( @word,1,len(@word)-1)
+>
+>         end
+>
+>     if @wordcpy = @revword
+>         print 'is a paladrom'
+>     else
+>         print 'is not paladrom'
+>
+>
+> end
+>
+>
+> exec pale_sp 'ABA'
+>
+>
+>
+>
+>
+>
+>
+> alter  proc anagram_sp( @word1  varchar(300), @word2 varchar(300))
+> as
+> begin
+> Declare @Alp varchar(26) ='abcdefghijklmnopqrstuvwxyz'
+> Declare @WordPart char(1) =''
+> Declare @anagram varchar(13) = 'Is not an Anagram'
+>     if(len(@word2) = len(@word1))
+>         while(len(@Alp) > 0)
+>             begin
+>
+>             set @WordPart = substring(@alp, 1,1)
+>             set @Alp = substring(@alp, 1,len(@alp)-1)
+>             if (len(replace(@word1,@WordPart,'')) =
+> len(replace(@word2,@WordPart,'')))
+>                 set @word2 = replace(@word2,@WordPart,'')
+>                 set @word1 = replace(@word1,@WordPart,'')
+>                 if(len(@word1) +len(@word2)=0)
+>                     set @anagram = 'Anagram'
+>
+>
+>              end
+>
+>         print @anagram
+>
+>         end
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+> exec anagram_sp 'aaab','aaaa'
+>
+>
+> */
+>
+>
+> /*1. Write a SP to check if a string is a palindrome or not
+> 2. Write a SP to take 2 strings as input and check if they are anagrams
+> 3. Write a SP to take a number as input and check if it is an Armstrong
+> number or not
+>
+>
+>
+> 4. Write a SP to print first 50 Fibonacci numbers.
+> 5. Write a SP take a number as an input and check if its Armstrong number
+> or not.
+>
+>
+>
+>
+> 6. Create a SP that would accept StartRange and EndRange of EmployeeID and
+> give me all the record sets that fall in that range and the Title of the
+> Employee
+> that exactly falls in the middle of the range (Info requested: EmployeeID,
+> FirstName, LastName) Also, SP must be encrypted.
+>
+>
+> select* from adventureworks
+>
+> 7. Create a SP that will accept a table Name and get me all the column
+> names along with their datatypes and sizes.
+> (Hints - sys.tables, sys.columns, sys.types, sys.schemas)
+>
+> create proc getinfo (@tablename varchar(50))
+> as (
+> select* from sys.columns where Object_id =(
+> select object_id from sys.tables where name = @tablename )
+>
+>
+> exec getinfo 'Airport'
+>
+> ), , sys.types, sys.schemas)
+>
+> 8. Create a SP that will accept Schema Name and Table Name and
+> return me the corresponding info of their columns based on what user passes
+> the input.
+>
+> create proc craig_sp_probseven(@SP varchar(30))
+> as
+> (
+>
+>
+> select* from  sys.columns where object_id  = (select object_id from
+> sys.tables
+> inner join sys.schemas on
+> sys.tables.schema_id = sys.schemas.schema_id
+> where sys.tables.name ='Student')
+>
+>
+>
+>
+> )
+>
+>
+>
+>
+> declare @var bigint = 10
+>
+> ;with CTE (counts,fact)
+> as
+> (
+>     select 1 as counts, 1 as fact
+>
+>
+>
+>     union all
+>
+>     select counts+1, fact*(1+counts)  from CTE
+>     where counts <@var
+>
+> )
+> select*from cte
+>
+>
+> ;with cte(sums, cnt)
+> as
+> (
+> select 0 as sums, 1 as cnt
+>
+> union all
+>
+> select sums+cnt, cnt+1 from cte
+> where cnt<=10
+>
+> )
+>
+> select* from cte
+>
+>
+> Create function UDF_Determinnant (@input1 int, @input2 int)
+> returns int
+> as
+>     begin
+>         return @input1+@input2
+>     end
+>
+> select dbo.UDF_Determinnant(12,22) as 'Results'
+> go
+>
+>
+> create function UDF_NonDeter ()
+> returns int
+> as
+>     begin
+>         Declare @var int
+>         Set @var = Datepart(ms,getdate())
+>         return @var
+>         end
+>
+>
+>     select dbo.UDF_NonDeter() as 'non deter'
+>
+> create function EMP1 (@EMPID int)
+> returns table
+> as
+>     return (select * from AdventureWorks2012.HumanResources.Employee where
+> BusinessEntityID=@empid)
+>
+> select*from dbo.EMP1(148)
+>
+>
+> create function Emp2(@EmpID int)
+> returns @TableVar Table(ID int, firstname varchar(50), Lastname
+> varchar(50), jobtitle varchar(100))
+> as
+>
+>     Begin
+>         insert into @TableVar
+>         select Employee.BusinessEntityID,FirstName, LastName, JobTitle
+>         from AdventureWorks2012.HumanResources.Employee
+>         inner join AdventureWorks2012.person.Person
+>         on Employee.BusinessEntityID = Person.BusinessEntityID
+>         where Employee.BusinessEntityID = @EmpID
+>         return
+>     end
+>
+>
+>
+>     select * from dbo.Emp2(222)
+>
+>
+>     create proc USP
+>     as
+>         select* from Employee
+>         exec USP
+>
+>
+>
+>
+>
+> create or alter function udf_tablefn(@input int = 0)
+> returns table
+> as
+> begin
+>     return(select* from AdventureWorks2012.HumanResources.Employee)
+>
+> end
+>
+>     select* from udf_tablefn()
+>  */
+>
+>
+>
+>
+>
+>
+>
+> /*1. Write a SP to check if a string is a palindrome or not
+> 2. Write a SP to take 2 strings as input and check if they are anagrams
+>
+>
+> */
+>
+> go
+>
+>  Create or Alter function stringcheck1(@word varchar(30))
+> returns varchar(300)
+> as
+>
+> begin
+>
+>
+> declare @wordcpy varchar(30)=@word
+> declare @revword varchar(30)=''
+> declare @final varchar(30)
+>
+>
+>         while (0 < len(@word))
+>         begin
+>             set @revword = @revword + right(@word,1)
+>             set @word = substring( @word,1,len(@word)-1)
+>
+>         end
+>
+>     if @wordcpy = @revword
+>         set @final ='is a paladrom'
+>     else
+>         set @final = 'is not paladrom'
+>
+> return @final
+>
+>
+> end
+>
+>
+> select dbo.stringcheck1('dddd')
+>
+>
+>
+>
+> --. Write a SP to take a number as input and check if it is an Armstrong
+> number or not
+> go
+>
+> create or alter function arm_ft(@word varchar(200))
+> returns varchar(200)
+> as
+> begin
+> declare @len int = len(@word)
+> declare @int int =1
+> declare @total bigint =0
+> declare @Number bigint = convert(int, @word)
+> declare @result varchar(200) ='Is an Armstong Number'
+>
+>
+>
+>     while (@len>=0)
+>         begin
+>
+>             set @int = convert(int, substring(@word,1,1))
+>             set @total = @total+@int*@int*@int
+>             set @len = @len -1
+>          end
+>
+>
+>     if (@Number!=@total)
+>         set @result = 'Not a thingy'
+>
+>
+> return  @result
+> end
+>
+>
+> select dbo.arm_ft(153)
+>
+>
+> select convert(int, '153')
+> /*
+>
+> 4. Write a SP to print first 50 Fibonacci numbers.
+>
+> create
+>
+>
+>
+>
+>
+> 5. Write a SP take a number as an input and check if its Armstrong number
+> or not.
+>
+>
+>
+>
+> 6. Create a SP that would accept StartRange and EndRange of EmployeeID and
+> give me all the record sets that fall in that range and the Title of the
+> Employee
+> that exactly falls in the middle of the range (Info requested: EmployeeID,
+> FirstName, LastName) Also, SP must be encrypted.
+>
+>
+>
+>
+> Create or alter Function tbl(@var int, @var2 int)
+> returns table
+> As
+> Begin
+>
+>
+>          ( select BusinessEntityID into @tb  from
+> AdventureWorks2012.Person.Person where BusinessEntityID between @var and
+> @var2)
+>
+>
+>
+> return @tb
+> end
+> /*
+> 7. Create a SP that will accept a table Name and get me all the column
+> names along with their datatypes and sizes.
+> (Hints - sys.tables, sys.columns, sys.types, sys.schemas)
+>
+> create proc getinfo (@tablename varchar(50))
+> as (
+> select* from sys.columns where Object_id =(
+> select object_id from sys.tables where name = @tablename )
+>
+>
+> exec getinfo 'Airport'
+>
+> ), , sys.types, sys.schemas)
+>
+> 8. Create a SP that will accept Schema Name and Table Name and
+> return me the corresponding info of their columns based on what user passes
+> the input.
+> */
+>
+>
+> create or alter function tablesc (@name varchar (200) = 'www')
+> returns varchar
+> begin
+>     set @name = ('select* from sys.columns as sc inner join sys.tables as
+> st
+>     on sc.Object_id= st.Object_id where sc.name =' + 'id')
+>
+>     return @name
+> end
+>
+>
+> select dbo.tablesc('id')
+>
+>
+>
+> */
+> create or alter Proc starpower(@count int=20)
+> as
+> begin
+> declare @star varchar (300) = '*'
+> declare @count2 int =@count
+>
+> --declare @count int = 0
+> while (@count>=@count2 and @count2!=0  )
+>     begin
+>             print space(@count2/2) +'*'
+>             set @count2= @count2-1
+>     end
+> /*
+>  end
+>
+>
+>  exec starpower 30
+>
+>
+> select rpad(' ',l,' ')||rpad('* ',r*2,'* ') k
+> from ( select level l,row_number() over(order by null) r
+>         from dual
+>        connect by level<=10
+>        order by l desc
+>
+>
+>
+>
+>
+>
+>
+>
+> On Thu, Jan 17, 2019 at 4:48 PM Craig Dyer <craigpdyer@gmail.com> wrote:
+>
+>> --01-17-2019 notes
+>> -- find the number of times something appears in a string
+>> select len('dcdadaaef') -len(replace('dcdadaaef','a',''))
+>>
+>>
+>> select (len('TSQL is a microsoft language TSQL is ANSI') -
+>> len(replace('TSQL is a microsoft language TSQL is ANSI', 'TSQL','')))/4
+>>
+>>
+>> select* from Employee
+>> insert into employee values( 1, 1234567890,0987654321)
+>> select left(phone,3) as Area, count(phone)  from employee
+>> group by left(phone,3)
+>>
+>> drop table swap
+>> create table swap ( Id int identity(1,1),answer varchar(10))
+>> insert into swap values ('Yes'),('No'),('Yes')
+>>
+>>
+>> select replace (answer,'Yes', 'No1'),  replace (answer,'No',
+>> 'Yes'),(answer,'Yes', 'No') from swap
+>>
+>>
+>>
+>> select*from swap
+>>
+>> update swap
+>> set answer = 'No1'
+>> where answer = 'Yes'
+>>
+>> update swap
+>> set answer = 'Yes'
+>> where answer = 'No'
+>>
+>> update swap
+>> set answer = 'No'
+>> where answer = 'No1'
+>>
+>> select*from swap
+>>
+>>
+>>
+>>
+>> create tabl emp
+>> (
+>>
+>> id int,
+>> name varchar(50),
+>> salary money,
+>> gender char(1)
+>> )
+>>
+>>
+>> insert into emp values ()
+>>
+>> create table World (
+>> id int identity,
+>> continent varchar(50),
+>> country varchar(50),
+>> population bigint)
+>>
+>> insert into World values ('Asia','China',1387160730),
+>> ('Asia','India',1324009090),
+>> ('Asia','Nepal',28038000),
+>> ('NorthAmerica','US',321234000),
+>> ('NorthAmerica','Canada',36885000),
+>> ('NorthAmerica','Mexico',121006000),
+>> ('Europe','Russia',144526636),
+>> ('Europe','Germany',82800000),
+>> ('Europe','Italy',60494118),
+>> ('Europe','Iceland',331000)
+>>
+>> select *  from World
+>>
+>>
+>>
+>> select *, (select max(population)  from World
+>> where continent = ot.continent)as 'Highest Population' from world as ot
+>> ---must be corrolated if yoru calculation in the derived solumn is
+>> column dependent
+>>
+>>
+>> CREATE TABLE NumPuzzle (Letter VARCHAR(10))
+>>
+>>  INSERT INTO NumPuzzle VALUES
+>> ('Ha'),('Wa2'),('10'),('12'),('14'),('Da'),('1Ah'),('1'),('#1')
+>>
+>> select sum( cast( letter as int)) from NumPuzzle
+>> where letter like '%[0-9]%' and letter not like '%[a-z]%'and letter
+>> not like '%[#,@]%'
+>> select*from NumPuzzle
+>> -- Rank
+>>
+>> /*
+>> what are ranking functions ? How to use them ?
+>>
+>> ranking fuction assigns numeric rank to a row depending on which one you
+>> use
+>> every ranking funtion you use has an over clause if you use you must
+>> also include an oder by clause
+>>
+>> partition by is an option for the oder by clause groups rankings
+>>
+>>
+>> ranking functions are used to assign interger values to rows of data
+>> when there are not data there, like only strings, assign temp values
+>> which creates a derived column.
+>>
+>> We may need a temp id, maybe can help remove duplicate enteries in your
+>> table
+>>
+>> Row_Number(), Rank(), Dense_rank(), Ntile()
+>>
+>>
+>>
+>> */
+>>
+>>
+>>
+>>
+>>
+>>
+>> create table Ranks
+>> (
+>> ID int Identity(1,1),
+>>  Name varchar(50)
+>>
+>> )
+>>
+>>
+>>
+>> insert into Ranks values('Diana'), ('Louis'), ('Jade'), ('Anna'),
+>> ('Shara')
+>>
+>>
+>> select* from ranks
+>>
+>>
+>>
+>> select Dense_rank() over( partition by Name order by name) as 'Rank',
+>> Name
+>> from Ranks
+>>
+>> select rank() over(order by name) as 'Rank', Name
+>> from Ranks
+>>
+>>
+>> select Ntile(2) over(partition by name order by name ) as 'Ntile', Name
+>> from Ranks
+>>
+>>
+>> select*from ranks
+>>
+>>
+>> Delete
+>> from ranks
+>> where ID in (Select ID from (select ID, ROW_NUMBER() over (partition
+>> by name order by name) as DupID from ranks) as derv
+>> where DupID  >1)
+>>
+>>
+>> DBCC checkident ('Ranks', reseed, 0)
+>>
+>>
+>>
+>> create view DuplicateDelete  As
+>>         select ID,name, ROW_NUMBER() over (partition by name order by
+>> name)
+>> as DupID from ranks
+>>
+>>
+>>
+>>         delete from DuplicateDelete
+>>         where  dupid>1
+>>
+>>
+>> select* from DuplicateDelete
+>>
+>>
+>> -----------------------------------
+>> DROP TABLE IF EXISTS EMP
+>>
+>> CREATE TABLE EMP (
+>> ID INT,
+>> ENAME VARCHAR(50),
+>> DEPT VARCHAR(50),
+>> SALARY MONEY)
+>>
+>> INSERT INTO EMP (ID,ENAME,DEPT,SALARY) VALUES (1,'A','HR',100),
+>> (2,'B','HR',50),
+>> (3,'C','IT',20),
+>> (4,'D','IT',80),
+>> (5,'E','HR',60)
+>>
+>> SELECT * FROM EMP
+>>
+>>
+>> select top 1* from  (select top 2 * from EMP as E
+>> order by SALARY desc) as d
+>> order by SALARY Asc
+>>
+>> select top 1* from  (select max(salary) from EMP as E
+>> order by SALARY desc) as d
+>> order by SALARY Asc
+>>
+>>
+>> select*from emp
+>>
+>>
+>>
+>> select c.* from (select  DEPT, max(salary) as 'MaxSalary' from emp
+>> group by DEPT) as c
+>> inner join emp dt
+>> on c.dept = dt.dept and dt.maxsalary = c.salary
+>>
+>> select*, (select max(salary) as 'Max Salary' from emp as inn where
+>> inn.dept = ot.dept) from emp as ot
+>>
+>>
+>>
+>> select * from (select*,(select max(salary) as maxsalary from emp group
+>> by dept)) as dt
+>> inner join emp e
+>> on e.dept = dt.dept and dt.maxsalary = e.salary
+>>
+>>
+>>
+>>
+>> select* from(
+>> select *, dense_rank() over ( partition by dept order by salary desc)
+>> as rnk from emp ) dt where dt.rnk =5
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>> CREATE TABLE Batch94(
+>>      candidatename varchar(20),
+>>          city varchar(20),
+>>      salary money
+>> )
+>>
+>> insert  into Batch94 values ('Hema','SD',100),
+>> ('Masha','LA',100),('Eliz','SD',300),
+>> ('Tamara','SF',150),('Fathi','LA',100),
+>> ('Sri','LA',300),('Lin','SF',500),
+>> ('Abdul','SD',600),('Stan','SF',400)
+>>
+>> select * from Batch94
+>>
+>>
+>> select * from (select *, dense_rank() over(order by salary desc ) as
+>> rnk from Batch94) dt
+>> where rnk =1
+>>
+>>
+>> select * from (select *, dense_rank() over(partition by city order by
+>> salary desc ) as rnk from Batch94) dt
+>> where rnk =2
+>>
+>>
+>> select * from (select *, dense_rank() over(partition by city order by
+>> salary desc ) as rnk from Batch94) as ad
+>> where rnk =2
+>> order by salary desc
+>>
+>> SELECT (len('SQL Tutorial for SQL and indexSQL') - len(REPLACE('SQL
+>> Tutorial for SQL and indexSQL', 'SQL', '')))/3
+>> SELECT charindex('T','SQL Tutorial for SQL and indexSQL',1)
+>>
+>>
+>>
+>> create table dup
+>> (
+>> id int iDentity(1,1),
+>> name varchar(30)
+>> )
+>> insert into dup values('Superman')
+>>
+>> select * from (select *, row_number() Over(partition by name order by
+>> name ) as rnk from dup) Dup
+>> where rnk>1
+>>
+>>
+>>
+>>
+>> -- views topic 1-17-19
+>>
+>> /* what is the point of the views? save sql quiers main resaon is
+>> secruity we can control who is about to see my select information
+>> every operstion in SQL requires rights, so we can choose which
+>> develpers can see the view
+>>
+>>
+>> what is a view? they are vurtal tables, but they don't exsit as a
+>> table. views are good for serrity area
+>>
+>> regular view have 4 rules 1) cannot be made with a compute by clause,
+>> 2) order by only allowed by a top clause
+>>  3) no 'select into' or 'hints' 4) must references a perminant object
+>>
+>>  schema bound view - locks columns cannot be changed by ddl,
+>>  Must have same 4 rules as regular + 1) two part naming convention
+>> must be used   2) Must list each column sepereatlty
+>>
+>>
+>>
+>>
+>> */
+>> go
+>>         drop view empinfo
+>>
+>>         create view empinfo as
+>>                 select FirstName+ ' '+ISNULL(MiddleName + '
+>> ','')+LastName
+>> as 'Full Name',
+>>                 JobTitle,Gender,MaritalStatus
+>>
+>>                 from AdventureWorks2012.HumanResources.Employee
+>>                 inner join AdventureWorks2012.Person.Person
+>>                 on Employee.BusinessEntityID =Person.BusinessEntityID
+>>         go
+>>
+>>
+>> select*from empinfo inner join AdventureWorks2012.Person.Person on
+>> empinfo.BusinessEntityID = Person.BusinessEntityID
+>>
+>> create view SchemaemplInfo with schemabinding as
+>> select eid, phone, phone2
+>> from dbo.Employee
+>>
+>>
+>> select * from SchemaemplInfo
+>> insert into Employee values(2,124,24)
+>>
+>>
+>> exec sp_helptext empinfo ---we can look at sytax however we want more
+>> secure how do we do? encytian :0
+>>
+>>
+>>
+>>
+>> drop view SchemaemplInfo
+>>
+>> create or alter view SchemaemplInfo with schemabinding /*, encryption*/
+>> as
+>> select eid, phone, phone2
+>> from dbo.Employee
+>>
+>> alter view [viewname] with schemabinding, encryption as
+>>
+>> -- if you have order by you must have a top clause use top 100%
+>> --
+>> alter table employee94
+>> add eid int, jobtitle varchar(30) ,department varchar(30)
+>>
+>> create or alter view v_HRdept with schemabinding as
+>> select EID, Jobtitle, department
+>> from dbo.employee94
+>> where department in ('HR', 'IT')
+>>
+>>
+>> select * from v_HRdept
+>>
+>> /*
+>> create view with check option to pervent inserts are not conflicting
+>> with where clause of the view
+>>
+>>
+>> create or alter view v_HRdept with schemabinding as
+>> select EID, Jobtitle, department
+>> from dbo.employee94
+>> where department in ('HR', 'IT')
+>> with check option
+>>
+>>
+>>
+>> */
+>> --------------------------------- end of views
+>>
+>>
+>>
+>>
+>>
+>>  CREATE TABLE Sales
+>> (
+>> SalesID INT IDENTITY, -- same as identity(1,1)
+>> SalesPerson VARCHAR(25),
+>> SalesAmount SMALLMONEY
+>> )
+>> GO
+>> --drop table if exists sales
+>> INSERT INTO Sales
+>> VALUES ('Raminder', 500),('Raj', 100), ('Pushpendra', 200),
+>>                 ('Raminder', 500), ('Swapnil', 220), ('Raj', 1000),
+>>                 ('Pushpendra', 210), ('Raminder', 525), ('Ruchi', 202),
+>>                 ('Raj', 10), ('David', 222), ('Raminder', 550),
+>> ('Swapnil', 220)
+>> GO
+>>
+>> SELECT * FROM Sales
+>> /*
+>> 1.      Create a VIEW to display SalesPerson, SalesAmount,
+>> MaxSalesBySalesPerson (out of all sales by a sales person max sales
+>> amount),
+>> MinSalesBySalesPerson (out of all sales by a sales person min sales
+>> amount),
+>> TotalSalesBySalesPerson (sum of all sales by a sales person),
+>> OrganizationAvgSales (average of all transactions for all sales person),
+>> OrganizationTotalSales (sum of all transactions for all sales person).
+>> Details should not be lost there are 13 rows in the table and output
+>> should
+>> have 13 rows.
+>>
+>> */
+>> create view craig as
+>> SELECT SalesPerson,SalesAmount,
+>> (select max(Salesamount) as MaxSale from Sales as ins where
+>> ins.SalesPerson=smin.SalesPerson )
+>> as MaxSalesBySalesPerson,  (select min(Salesamount) as MinSale from
+>> Sales as ins where ins.SalesPerson=Smin.SalesPerson ) as
+>> MinSalesBySalesPerson,
+>> (select sum(salesamount) from sales as sm where
+>> sm.SalesPerson=Smin.SalesPerson) as TotalSalesBySalesPerson,
+>> (select avg(salesamount) from sales ) as OrganizationAvgSales,
+>> (select sum(SalesAmount)from sales) as OrganizationTotalSales
+>>
+>> select*from sales
+>>
+>> select SalesPerson,SalesAmount, (select min(salesamount)
+>> over(partition by salesperson)) as minsalesbysp,(select
+>> max(salesamount) over(partition by salesperson)) as maxsalesbys,
+>> sum(salesamount) over(partition by salesperson) as totalsalesbySP,
+>> (select avg(salesamount) from sales) as OrgTotalAve, (select
+>> sum(salesamount) from sales) as orgtotalSales from Sales
+>>
+>>
+>>
+>> select*from craig
+>>
+>>
+>>
+>>
+>>
+>> select*from sales
+>>
+>> --- views done  1-17-2019
+>>
+>>
+>> /*
+>> Null functions 01-17-2019
+>> isnull(val1, val2) returns first not null in its set :) ASSI for TSQL
+>> only, any data types but only two valies
+>> coaelse(val, val2, val3) -- ISO international standard one data type
+>> many columns
+>> nullif(val1, val2) returns null if val1=val2
+>>
+>>
+>> what is null?
+>>
+>> Null functions are used on column  with ull values
+>>
+>> */
+>> select coalesce('wqndl', Null, '')
+>> select isnull(Null, 'dwqdqw')
+>>
+>> select*from Employee
+>>
+>>
+>> select ISNULL(ISNULL(Null, Null),ISNULL(121,'jimmy'))
+>>
+>>
+>> select nullif('a','a')
+>> select nullif('a',null)
+>> select nullif('a','a')
+>> select nullif('34',34)
+>>
+>>
+>> create table nulltable ( primaryphone int, secondaryphone int)
+>> insert into nulltable values (null,null),(null,3),(3,null),(4,4)
+>>
+>>
+>> set ANSI_NUlls off --now can compare nulls
+>> set ANSI_NUlls on
+>> select nullif(primaryphone,secondaryphone), * from nulltable
+>>
+>>
+>> select 1 where Null = Null
+>>
+>>
+>> ------end of Null functions
+>>
+>> /*
+>> beinging of Dynamic SQL 1-17-2019
+>> what is DSQL - ever changing sequal curve that is always changing ,
+>> using variable
+>> something that you use to hold an object
+>>
+>> variable are used to change the values of syntax
+>>
+>> */
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>> On 1/17/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> > --01-17-2019 notes
+>> > -- find the number of times something appears in a string
+>> > select len('dcdadaaef') -len(replace('dcdadaaef','a',''))
+>> >
+>> >
+>> > select (len('TSQL is a microsoft language TSQL is ANSI') -
+>> > len(replace('TSQL is a microsoft language TSQL is ANSI', 'TSQL','')))/4
+>> >
+>> >
+>> > select* from Employee
+>> > insert into employee values( 1, 1234567890,0987654321)
+>> > select left(phone,3) as Area, count(phone)  from employee
+>> > group by left(phone,3)
+>> >
+>> > drop table swap
+>> > create table swap ( Id int identity(1,1),answer varchar(10))
+>> > insert into swap values ('Yes'),('No'),('Yes')
+>> >
+>> >
+>> > select replace (answer,'Yes', 'No1'),  replace (answer,'No',
+>> > 'Yes'),(answer,'Yes', 'No') from swap
+>> >
+>> >
+>> >
+>> > select*from swap
+>> >
+>> > update swap
+>> > set answer = 'No1'
+>> > where answer = 'Yes'
+>> >
+>> > update swap
+>> > set answer = 'Yes'
+>> > where answer = 'No'
+>> >
+>> > update swap
+>> > set answer = 'No'
+>> > where answer = 'No1'
+>> >
+>> > select*from swap
+>> >
+>> >
+>> >
+>> >
+>> > create tabl emp
+>> > (
+>> >
+>> > id int,
+>> > name varchar(50),
+>> > salary money,
+>> > gender char(1)
+>> > )
+>> >
+>> >
+>> > insert into emp values ()
+>> >
+>> > create table World (
+>> > id int identity,
+>> > continent varchar(50),
+>> > country varchar(50),
+>> > population bigint)
+>> >
+>> > insert into World values ('Asia','China',1387160730),
+>> > ('Asia','India',1324009090),
+>> > ('Asia','Nepal',28038000),
+>> > ('NorthAmerica','US',321234000),
+>> > ('NorthAmerica','Canada',36885000),
+>> > ('NorthAmerica','Mexico',121006000),
+>> > ('Europe','Russia',144526636),
+>> > ('Europe','Germany',82800000),
+>> > ('Europe','Italy',60494118),
+>> > ('Europe','Iceland',331000)
+>> >
+>> > select *  from World
+>> >
+>> >
+>> >
+>> > select *, (select max(population)  from World
+>> > where continent = ot.continent)as 'Highest Population' from world as ot
+>> > ---must be corrolated if yoru calculation in the derived solumn is
+>> > column dependent
+>> >
+>> >
+>> > CREATE TABLE NumPuzzle (Letter VARCHAR(10))
+>> >
+>> >  INSERT INTO NumPuzzle VALUES
+>> > ('Ha'),('Wa2'),('10'),('12'),('14'),('Da'),('1Ah'),('1'),('#1')
+>> >
+>> > select sum( cast( letter as int)) from NumPuzzle
+>> > where letter like '%[0-9]%' and letter not like '%[a-z]%'and letter
+>> > not like '%[#,@]%'
+>> > select*from NumPuzzle
+>> > -- Rank
+>> >
+>> > /*
+>> > what are ranking functions ? How to use them ?
+>> >
+>> > ranking fuction assigns numeric rank to a row depending on which one
+>> > you
+>> > use
+>> > every ranking funtion you use has an over clause if you use you must
+>> > also include an oder by clause
+>> >
+>> > partition by is an option for the oder by clause groups rankings
+>> >
+>> >
+>> > ranking functions are used to assign interger values to rows of data
+>> > when there are not data there, like only strings, assign temp values
+>> > which creates a derived column.
+>> >
+>> > We may need a temp id, maybe can help remove duplicate enteries in your
+>> > table
+>> >
+>> > Row_Number(), Rank(), Dense_rank(), Ntile()
+>> >
+>> >
+>> >
+>> > */
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> > create table Ranks
+>> > (
+>> > ID int Identity(1,1),
+>> >  Name varchar(50)
+>> >
+>> > )
+>> >
+>> >
+>> >
+>> > insert into Ranks values('Diana'), ('Louis'), ('Jade'), ('Anna'),
+>> ('Shara')
+>> >
+>> >
+>> > select* from ranks
+>> >
+>> >
+>> >
+>> > select Dense_rank() over( partition by Name order by name) as 'Rank',
+>> Name
+>> > from Ranks
+>> >
+>> > select rank() over(order by name) as 'Rank', Name
+>> > from Ranks
+>> >
+>> >
+>> > select Ntile(2) over(partition by name order by name ) as 'Ntile', Name
+>> > from Ranks
+>> >
+>> >
+>> > select*from ranks
+>> >
+>> >
+>> > Delete
+>> > from ranks
+>> > where ID in (Select ID from (select ID, ROW_NUMBER() over (partition
+>> > by name order by name) as DupID from ranks) as derv
+>> > where DupID  >1)
+>> >
+>> >
+>> > DBCC checkident ('Ranks', reseed, 0)
+>> >
+>> >
+>> >
+>> > create view DuplicateDelete  As
+>> >       select ID,name, ROW_NUMBER() over (partition by name order by
+>> > name)
+>> > as DupID from ranks
+>> >
+>> >
+>> >
+>> >       delete from DuplicateDelete
+>> >       where  dupid>1
+>> >
+>> >
+>> > select* from DuplicateDelete
+>> >
+>> >
+>> > -----------------------------------
+>> > DROP TABLE IF EXISTS EMP
+>> >
+>> > CREATE TABLE EMP (
+>> > ID INT,
+>> > ENAME VARCHAR(50),
+>> > DEPT VARCHAR(50),
+>> > SALARY MONEY)
+>> >
+>> > INSERT INTO EMP (ID,ENAME,DEPT,SALARY) VALUES (1,'A','HR',100),
+>> > (2,'B','HR',50),
+>> > (3,'C','IT',20),
+>> > (4,'D','IT',80),
+>> > (5,'E','HR',60)
+>> >
+>> > SELECT * FROM EMP
+>> >
+>> >
+>> > select top 1* from  (select top 2 * from EMP as E
+>> > order by SALARY desc) as d
+>> > order by SALARY Asc
+>> >
+>> > select top 1* from  (select max(salary) from EMP as E
+>> > order by SALARY desc) as d
+>> > order by SALARY Asc
+>> >
+>> >
+>> > select*from emp
+>> >
+>> >
+>> >
+>> > select c.* from (select  DEPT, max(salary) as 'MaxSalary' from emp
+>> > group by DEPT) as c
+>> > inner join emp dt
+>> > on c.dept = dt.dept and dt.maxsalary = c.salary
+>> >
+>> > select*, (select max(salary) as 'Max Salary' from emp as inn where
+>> > inn.dept = ot.dept) from emp as ot
+>> >
+>> >
+>> >
+>> > select * from (select*,(select max(salary) as maxsalary from emp group
+>> > by dept)) as dt
+>> > inner join emp e
+>> > on e.dept = dt.dept and dt.maxsalary = e.salary
+>> >
+>> >
+>> >
+>> >
+>> > select* from(
+>> > select *, dense_rank() over ( partition by dept order by salary desc)
+>> > as rnk from emp ) dt where dt.rnk =5
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> >
+>> > CREATE TABLE Batch94(
+>> >      candidatename varchar(20),
+>> >        city varchar(20),
+>> >      salary money
+>> > )
+>> >
+>> > insert  into Batch94 values ('Hema','SD',100),
+>> > ('Masha','LA',100),('Eliz','SD',300),
+>> > ('Tamara','SF',150),('Fathi','LA',100),
+>> > ('Sri','LA',300),('Lin','SF',500),
+>> > ('Abdul','SD',600),('Stan','SF',400)
+>> >
+>> > select * from Batch94
+>> >
+>> >
+>> > select * from (select *, dense_rank() over(order by salary desc ) as
+>> > rnk from Batch94) dt
+>> > where rnk =1
+>> >
+>> >
+>> > select * from (select *, dense_rank() over(partition by city order by
+>> > salary desc ) as rnk from Batch94) dt
+>> > where rnk =2
+>> >
+>> >
+>> > select * from (select *, dense_rank() over(partition by city order by
+>> > salary desc ) as rnk from Batch94) as ad
+>> > where rnk =2
+>> > order by salary desc
+>> >
+>> > SELECT (len('SQL Tutorial for SQL and indexSQL') - len(REPLACE('SQL
+>> > Tutorial for SQL and indexSQL', 'SQL', '')))/3
+>> > SELECT charindex('T','SQL Tutorial for SQL and indexSQL',1)
+>> >
+>> > On 1/16/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >> ---Question a
+>> >> select* from FlightSchedule
+>> >> where statusid ='O' and flightDate not between  '2014-02-01' and
+>> >> '2014-02-15'
+>> >>
+>> >>
+>> >> ---Question b
+>> >> /*
+>> >> b) Flights which depart from “New York” city in the morning.
+>> >> To Show flight number, flight date, depart airport, arrive airport,
+>> >> and scheduled depart time
+>> >> */
+>> >>
+>> >>
+>> >> select*, fs.* from FlightRoute as fr left join FlightSchedule as fs
+>> >> on fs.flightNumber = fr.flightNumber
+>> >> where scheduledDepartTime between '00:00' and  '12:00' and
+>> >> departAirport
+>> >> =
+>> >> 'JFK'
+>> >>
+>> >> --Question c
+>> >> /*
+>> >> c) All airplanes which once delayed or were cancelled.
+>> >> To Show airplane ID, aircraft version, flight date and status
+>> description
+>> >> */
+>> >>
+>> >>
+>> >> select fs.airplaneID, ap.airplane,ac.aircraftTypeID,
+>> >> fs.flightDate,st.description from FlightSchedule as fs left join
+>> >> Airplane as ap
+>> >>  on ap.aircraftTypeID =fs.airplaneID
+>> >>  left join AircraftSpecs as ac
+>> >>  on ac.aircraftTypeID = ap.aircraftTypeID
+>> >>  left join Status as st
+>> >>  on st.statusID = fs.statusID
+>> >> where fs.statusID ='D' or fs.statusID = 'C'
+>> >>
+>> >>
+>> >> ------Question D
+>> >> /*
+>> >> d) All airplanes arriving at
+>> >> “Florida” which have less
+>> >> than 200 seats.
+>> >> To show airplane ID, arrive airport,
+>> >>  flight number, and flight date
+>> >>
+>> >> */
+>> >> select  fs.airplaneID,fr.arriveAirport,fr.flightNumber, fs.flightdate
+>> >> from FlightRoute as fr
+>> >> inner join FlightSchedule as fs on fs.flightNumber =fr.flightNumber
+>> >> inner join Airport as ap
+>> >> on ap.airportID = fr.arriveAirport inner join city as ct
+>> >> on ct.cityID = ap.cityID inner join states as st
+>> >> on st.statesAbbr = ct.stateAbbr inner join Airplane as apl
+>> >> on apl.airplane = fs.airplaneID inner join AircraftSpecs as craft
+>> >> on craft.aircraftTypeID = apl.aircraftTypeID
+>> >> where craft.cabunNumOfSeats <200 and st.statesabbr = 'FL'
+>> >>
+>> >> /*
+>> >>
+>> >> e) Information of all flights in the database to display flight
+>> >> number,
+>> >> flight date, flight status description, airplane ID, aircraft version,
+>> >> fuel capacity, purchase date. Output is sorted in descending order of
+>> >> purchase date
+>> >>
+>> >>
+>> >> */
+>> >> select fs.flightnumber, fs.flightdate,stat.description,
+>> >> fs.airplaneID, ac.aircraftversion, ac.fuelcapacity, apl.purchaseDate
+>> >> from FlightSchedule as fs
+>> >> inner join FlightRoute as fr on fs.flightNumber =fr.flightNumber inner
+>> >> join Airplane as apl
+>> >> on apl.airplane = fs.airplaneID inner join AircraftSpecs as ac on
+>> >> ac.aircraftTypeID = apl.aircraftTypeID inner join
+>> >> status as stat on stat.statusID = fs.statusID
+>> >>
+>> >> /*
+>> >> f) Update the flight’s schedule depart time to be 45 minutes
+>> >> later than its original time for Cancelled flights
+>> >>
+>> >>
+>> >> */
+>> >>
+>> >>
+>> >> update FlightRoute
+>> >> set scheduledDepartTime = dateadd(minute, 45, scheduledDepartTime)
+>> >> select* from FlightRoute
+>> >> /*
+>> >> g) To display Airplane ID, aircraftTypeID, cabinNumOfSeats,
+>> >>  fuelCapacity and all the attributes of FlightSchedule Entity for
+>> >>  each and every airplane. Display Airplane details even if it is
+>> >>  not scheduled to fly
+>> >> */
+>> >> select fs.airplaneID, ac.aircrafttypeid, ac.cabunNumOfSeats,
+>> >> ac.fuelCapacity, FS.* from FlightSchedule as fs inner join
+>> >> airplane as ap on ap.airplane = fs.airplaneID inner join AircraftSpecs
+>> >> as ac on ac.aircraftTypeID = ap.aircraftTypeID
+>> >>
+>> >>
+>> >>
+>> >> /*
+>> >> select*from FlightSchedule
+>> >>
+>> >> select*from AircraftSpecs
+>> >> select*from airplane
+>> >> select*from Airport
+>> >> select*from city
+>> >> select*from Status
+>> >> select*from states
+>> >> select*from FlightRoute
+>> >>
+>> >>
+>> >> */
+>> >>
+>> >> On 1/16/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>> --1. Find the titles of all movies directed by Steven Spielberg.
+>> >>> select* from movie
+>> >>> where director = 'Steven Spielberg'
+>> >>>
+>> >>>
+>> >>> -- 2. Find all years that have a movie that received a rating of 4 or
+>> >>> 5, and sort them in increasing order.
+>> >>> select mv.year,rt.stars from movie as mv full outer join rating as rt
+>> >>> on mv.mid=rt.mID
+>> >>> where rt.stars between 4 and 5
+>> >>>
+>> >>>
+>> >>>
+>> >>>
+>> >>> -- 3. Find the titles of all movies that have no ratings.
+>> >>> select title from movie as mv left join rating as rt
+>> >>> on mv.mid=rt.mID
+>> >>> where rt.stars is null or rt.stars = ''
+>> >>>
+>> >>>
+>> >>> --select title from movie where movie.mID in (select mid,* from
+>> >>> Rating
+>> >>> where stars is null or stars = '')
+>> >>>
+>> >>>
+>> >>>
+>> >>> -- 4. Some reviewers didn't provide a date with their rating
+>> >>> -- Find the names of all reviewers who have ratings with a NULL value
+>> >>> for the date.
+>> >>>
+>> >>>             select rv.name from movie as mv left join rating as rt
+>> >>>     on mv.mid=rt.mID inner join Reviewer as rv on rv.rID = rt.rID
+>> >>>     where rt.ratingDate is null
+>> >>>
+>> >>>
+>> >>>
+>> >>> -- 5. Write a query to return the ratings data in a more readable
+>> >>> format: reviewer name, movie title, stars, and ratingDate. Also, sort
+>> >>> the data, first by reviewer name, then by movie title, and lastly by
+>> >>> number of stars.
+>> >>>
+>> >>>     select rv.name,mv.title, rt.stars,rt.ratingDate from movie as mv
+>> left
+>> >>> join rating as rt
+>> >>> on mv.mid=rt.mID inner join Reviewer as rv on rv.rID = rt.rID
+>> >>>
+>> >>> -- 6. For all cases where the same reviewer rated the same movie
+>> >>> twice
+>> >>> and gave it a higher rating the second time, return the reviewer's
+>> >>> name and the title of the movie.
+>> >>>     --_FAILS
+>> >>>
+>> >>>
+>> >>>     select count(rv.rID),mv.title, rt.stars, Rv.rID from movie as mv
+>> left
+>> >>> join rating as rt
+>> >>> on mv.mid=rt.mID inner join Reviewer as rv on rv.rID = rt.rID
+>> >>> group by rv.rid, mv.title, rt.stars
+>> >>> order by rv.rid
+>> >>>
+>> >>>
+>> >>>
+>> >>>
+>> >>> -- 7. For each movie that has at least one rating, find the highest
+>> >>> number of stars that movie received. Return the movie title and
+>> >>> number
+>> >>> of stars. Sort by movie title.
+>> >>>
+>> >>>
+>> >>>
+>> >>>
+>> >>>     select mv.title,  max(rt.stars) from movie as mv left join rating
+>> as rt
+>> >>> on mv.mid=rt.mID inner join Reviewer as rv on rv.rID = rt.rID
+>> >>> group by mv.title
+>> >>>
+>> >>>
+>> >>>
+>> >>>
+>> >>>
+>> >>>
+>> >>>
+>> >>> -- 8. For each movie, return the title and the 'rating spread', that
+>> >>> is, the difference between highest and lowest ratings given to that
+>> >>> movie. Sort by rating spread from highest to lowest, then by movie
+>> >>> title.
+>> >>>
+>> >>>     ---FAILS
+>> >>>     /*
+>> >>>
+>> >>>     select * from rating
+>> >>>             select mv.title, count(rt.stars) as 'number of reviews'
+>> from movie
+>> >>> as mv left join rating as rt
+>> >>> on mv.mid=rt.mID inner join Reviewer as rv on rv.rID = rt.rID inner
+>> >>> join rating as rt2 on rt2.mID = mv.mID
+>> >>> group by mv.title
+>> >>>     */
+>> >>>
+>> >>>
+>> >>>             select mv.title, (select max(rt.stars) - min(rt.stars))
+>> >>> as
+>> spread
+>> >>> from rating as rt
+>> >>>             inner join movie as mv on mv.mID = rt.mID
+>> >>>             group by mv.title
+>> >>>             order by spread desc
+>> >>>
+>> >>> -- 9. Find the difference between the average rating of movies
+>> >>> released
+>> >>> --before 1980 and the average rating of movies released after 1980.
+>> >>> --(Make sure to calculate the average rating for each movie, then the
+>> >>> --average of those averages for movies before 1980 and movies after.
+>> >>> --Don't just calculate the overall average rating before and after
+>> >>> 1980.)
+>> >>>
+>> >>>
+>> >>>
+>> >>> select (select AVG(stars) from rating as rt inner join movie as mv on
+>> >>> rt.mid= mv.mid where mv.year<=1980)-
+>> >>> (select AVG(stars)  from rating as rt inner join movie as mv on
+>> >>> rt.mid=
+>> >>> mv.mid
+>> >>> where mv.year > 1980) as DifferentinAverages from rating
+>> >>>
+>> >>>
+>> >>> /*
+>> >>>
+>> >>> select  AVG(stars) as AvStars into bf1980 from rating as rt join
+>> >>> movie
+>> >>> as mv on rt.mid= mv.mid
+>> >>> where mv.year <= 1990
+>> >>> group by mv.title
+>> >>>
+>> >>> select AVG(stars) as AvStars into Af1980  from rating as rt join
+>> >>> movie
+>> >>> as mv on rt.mid= mv.mid
+>> >>> where mv.year > 1980
+>> >>> group by mv.title
+>> >>>
+>> >>>
+>> >>> declare @bf float
+>> >>> declare @Af float
+>> >>>
+>> >>>
+>> >>>
+>> >>> set @bf = (select avg(bf1980.AvStars) from bf1980 )
+>> >>> set @af = (select avg( af1980.AvStars) from af1980)
+>> >>>
+>> >>>
+>> >>>
+>> >>> print @bf - @af
+>> >>> print 'is the difference between averages from before 1980 and after'
+>> >>>
+>> >>> */
+>> >>> select* from rating
+>> >>> select * from movie
+>> >>> select* from reviewer
+>> >>>
+>> >>>
+>> >>>
+>> >>> select location, max(price) from table
+>> >>> where location = (select location from tanel )
+>> >>>
+>> >>> --important to understand
+>> >>> select right( 'email@gmail.com', len('email@gmail.com')-charindex('@'
+>> >>> ,'email@gmail.com'))
+>> >>>
+>> >>>
+>> >>>
+>> >>> -------------------------------------------------------------
+>> >>> HID CITY    PRICE
+>> >>> 1   Poway   100
+>> >>> 2   Poway   150
+>> >>> 3   Poway   120
+>> >>> 4   San Diego       250
+>> >>> 5   San Diego       220
+>> >>>
+>> >>> --Find the price difference for all hotes from the hotel that has the
+>> >>> lowest price in their city
+>> >>>
+>> >>> drop table if exists hotel
+>> >>> create table hotel (
+>> >>> hid int,
+>> >>> city varchar(20),
+>> >>> price money)
+>> >>>
+>> >>> insert into hotel values
+>> >>> (1,'Poway',100),(2,'Poway',150),(3,'Poway',120),
+>> >>> (4,'San Diego',250),(5,'San Diego', 220)
+>> >>>
+>> >>> select *,((select max(nHT.price) from hotel as NHT where NHT.city =
+>> >>> ht.city)  - ht.Price) as Diff
+>> >>> from hotel as ht
+>> >>>
+>> >>>
+>> >>> select * , Maxp - Price as 'diff' from hotel as HT1
+>> >>> inner join
+>> >>>
+>> >>> (select city, max(price) as 'Maxp' from hotel
+>> >>> group by city) HT2
+>> >>>
+>> >>> on HT2.city = HT1.city
+>> >>>
+>> >>>
+>> >>>
+>> >>>
+>> >>> select * from hotel
+>> >>>
+>> >>> ----339pm 100% , 408pm 90%
+>> >>>
+>> >>> On 1/16/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>> irected by Steven Spielberg.
+>> >>>> select* from movie
+>> >>>> where director = 'Steven Spielberg'
+>> >>>>
+>> >>>>
+>> >>>> -- 2. Find all years that have a movie that received a rating of 4
+>> >>>> or
+>> >>>> 5, and sort them in increasing order.
+>> >>>> select mv.year,rt.stars from movie as mv full outer join rating as
+>> >>>> rt
+>> >>>> on mv.mid=rt.mID
+>> >>>> where rt.stars between 4 and 5
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>> -- 3. Find the titles of all movies that have no ratings.
+>> >>>> select title from movie as mv left join rating as rt
+>> >>>> on mv.mid=rt.mID
+>> >>>> where rt.stars is null or rt.stars = ''
+>> >>>>
+>> >>>>
+>> >>>> --select title from movie where movie.mID in (select mid,* from
+>> >>>> Rating
+>> >>>> where stars is null or stars = '')
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>> -- 4. Some reviewers didn't provide a date with their rating
+>> >>>> -- Find the names of all reviewers who have ratings with a NULL
+>> >>>> value
+>> >>>> for the date.
+>> >>>>
+>> >>>>            select rv.name from movie as mv left join rating as rt
+>> >>>>    on mv.mid=rt.mID inner join Reviewer as rv on rv.rID = rt.rID
+>> >>>>    where rt.ratingDate is null
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>> -- 5. Write a query to return the ratings data in a more readable
+>> >>>> format: reviewer name, movie title, stars, and ratingDate. Also,
+>> >>>> sort
+>> >>>> the data, first by reviewer name, then by movie title, and lastly by
+>> >>>> number of stars.
+>> >>>>
+>> >>>>    select rv.name,mv.title, rt.stars,rt.ratingDate from movie as mv
+>> left
+>> >>>> join rating as rt
+>> >>>> on mv.mid=rt.mID inner join Reviewer as rv on rv.rID = rt.rID
+>> >>>>
+>> >>>> -- 6. For all cases where the same reviewer rated the same movie
+>> >>>> twice
+>> >>>> and gave it a higher rating the second time, return the reviewer's
+>> >>>> name and the title of the movie.
+>> >>>>    --_FAILS
+>> >>>>
+>> >>>>
+>> >>>>    select count(rv.rID),mv.title, rt.stars, Rv.rID from movie as mv
+>> left
+>> >>>> join rating as rt
+>> >>>> on mv.mid=rt.mID inner join Reviewer as rv on rv.rID = rt.rID
+>> >>>> group by rv.rid, mv.title, rt.stars
+>> >>>> order by rv.rid
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>> -- 7. For each movie that has at least one rating, find the highest
+>> >>>> number of stars that movie received. Return the movie title and
+>> >>>> number
+>> >>>> of stars. Sort by movie title.
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>>    select mv.title,  max(rt.stars) from movie as mv left join rating
+>> as
+>> >>>> rt
+>> >>>> on mv.mid=rt.mID inner join Reviewer as rv on rv.rID = rt.rID
+>> >>>> group by mv.title
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>> -- 8. For each movie, return the title and the 'rating spread', that
+>> >>>> is, the difference between highest and lowest ratings given to that
+>> >>>> movie. Sort by rating spread from highest to lowest, then by movie
+>> >>>> title.
+>> >>>>
+>> >>>>    ---FAILS
+>> >>>>    /*
+>> >>>>
+>> >>>>    select * from rating
+>> >>>>            select mv.title, count(rt.stars) as 'number of reviews'
+>> from movie
+>> >>>> as mv left join rating as rt
+>> >>>> on mv.mid=rt.mID inner join Reviewer as rv on rv.rID = rt.rID inner
+>> >>>> join rating as rt2 on rt2.mID = mv.mID
+>> >>>> group by mv.title
+>> >>>>    */
+>> >>>>
+>> >>>>
+>> >>>>            select mv.title, (select max(rt.stars) - min(rt.stars))
+>> >>>> as
+>> spread
+>> >>>> from rating as rt
+>> >>>>            inner join movie as mv on mv.mID = rt.mID
+>> >>>>            group by mv.title
+>> >>>>            order by spread desc
+>> >>>>
+>> >>>> -- 9. Find the difference between the average rating of movies
+>> released
+>> >>>> --before 1980 and the average rating of movies released after 1980.
+>> >>>> --(Make sure to calculate the average rating for each movie, then
+>> >>>> the
+>> >>>> --average of those averages for movies before 1980 and movies after.
+>> >>>> --Don't just calculate the overall average rating before and after
+>> >>>> 1980.)
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>> select (select AVG(cast((stars) as float)) as AvStars from rating as
+>> >>>> rt  join movie as mv on rt.mid= mv.mid where mv.year<=1980),
+>> >>>> (select AVG(cast((stars)as float)) as AvStars from rating as rt join
+>> >>>> movie as mv on rt.mid= mv.mid
+>> >>>> where mv.year > 1980) as af from rating
+>> >>>>
+>> >>>>
+>> >>>> /*
+>> >>>>
+>> >>>> select  AVG(stars) as AvStars into bf1980 from rating as rt join
+>> >>>> movie
+>> >>>> as mv on rt.mid= mv.mid
+>> >>>> where mv.year <= 1990
+>> >>>> group by mv.title
+>> >>>>
+>> >>>> select AVG(stars) as AvStars into Af1980  from rating as rt join
+>> >>>> movie
+>> >>>> as mv on rt.mid= mv.mid
+>> >>>> where mv.year > 1980
+>> >>>> group by mv.title
+>> >>>>
+>> >>>>
+>> >>>> declare @bf float
+>> >>>> declare @Af float
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>> set @bf = (select avg(bf1980.AvStars) from bf1980 )
+>> >>>> set @af = (select avg( af1980.AvStars) from af1980)
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>> print @bf - @af
+>> >>>> print 'is the difference between averages from before 1980 and
+>> >>>> after'
+>> >>>>
+>> >>>> */
+>> >>>> select* from rating
+>> >>>> select * from movie
+>> >>>> select* from reviewer
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>>
+>> >>>> On 1/15/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>>> On 1/15/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>>>> If there are images in this attachment, they will not be
+>> >>>>>> displayed.
+>> >>>>>> Download the original attachment
+>> >>>>>>
+>> >>>>>> JOINS Assignment-TSQL
+>> >>>>>>
+>> >>>>>> Name:
+>> >>>>>>
+>> >>>>>> Batch No:
+>> >>>>>>
+>> >>>>>> Notes: Use a different font color for answer. Don’t change the
+>> >>>>>> numbering of the questions.
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> -- TSQL SCRIPT
+>> >>>>>>
+>> >>>>>> ---------------------------
+>> >>>>>>
+>> >>>>>> --Department(DepartmentID, DepartmentName)
+>> >>>>>>
+>> >>>>>> --Employee(EmployeeID, EmployeeName, DepartmentID)
+>> >>>>>>
+>> >>>>>> --Project(ProjectID, ProjectName)
+>> >>>>>>
+>> >>>>>> --ProjectTeamMember(ProjectID, EmployeeID)
+>> >>>>>>
+>> >>>>>> Create database database_practice
+>> >>>>>>
+>> >>>>>> Go
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> use database_practice
+>> >>>>>>
+>> >>>>>> go
+>> >>>>>>
+>> >>>>>> drop table if exists Department
+>> >>>>>>
+>> >>>>>> drop table if exists Employee
+>> >>>>>>
+>> >>>>>> drop table if exists Project
+>> >>>>>>
+>> >>>>>> drop table if exists ProjectTeamMember
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> Create Table Department (DepartmentID int primary key,
+>> DepartmentName
+>> >>>>>> Varchar(20));
+>> >>>>>>
+>> >>>>>> Go
+>> >>>>>>
+>> >>>>>> Create Table Employee
+>> >>>>>>
+>> >>>>>> (EmployeeID Int primary key,
+>> >>>>>>
+>> >>>>>> ManagerID int foreign key references Employee(EmployeeID),
+>> >>>>>>
+>> >>>>>> EmployeeName Varchar(20), DepartmentID Int foreign key references
+>> >>>>>> Department(DepartmentID));
+>> >>>>>>
+>> >>>>>> Go
+>> >>>>>>
+>> >>>>>> Create Table Project (ProjectID Int primary key, ProjectName
+>> >>>>>> Varchar(20));
+>> >>>>>>
+>> >>>>>> GO
+>> >>>>>>
+>> >>>>>> Create Table ProjectTeamMember(ProjectID Int, EmployeeID Int,
+>> >>>>>>
+>> >>>>>> constraint pk_projectemp primary key(ProjectID, EmployeeID),
+>> >>>>>>
+>> >>>>>> constraint fk_project foreign key(ProjectID) references
+>> >>>>>> Project(ProjectID),
+>> >>>>>>
+>> >>>>>> constraint fk_employee foreign key(EmployeeID) references
+>> >>>>>> Employee(EmployeeID)
+>> >>>>>>
+>> >>>>>> );
+>> >>>>>>
+>> >>>>>> Go
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> Insert into Department Values (111, 'IT'), (112, 'Engineering'),
+>> >>>>>> (113,
+>> >>>>>> 'Testing'), (114, 'HR');
+>> >>>>>>
+>> >>>>>> Go
+>> >>>>>>
+>> >>>>>> Insert into Employee Values
+>> >>>>>>
+>> >>>>>> (1, null, 'Tom', 111), (2,1,'Adam', 111), (3,1, 'Jack', 112),
+>> >>>>>> (4,3,
+>> >>>>>> 'Kate', 113), (5,4,'Nick', 114), (6,1, 'Tony', 112), (7,5,
+>> >>>>>> 'James',
+>> >>>>>> 111);
+>> >>>>>>
+>> >>>>>> GO
+>> >>>>>>
+>> >>>>>> Insert into Project Values (201, 'Test1'), (202, 'Banking'), (203,
+>> >>>>>> 'Timekeeper'), (204, 'Conversion');
+>> >>>>>>
+>> >>>>>> Go
+>> >>>>>>
+>> >>>>>> Insert into ProjectTeamMember Values (201, 1), (201, 2), (201, 7),
+>> >>>>>> (202, 3), (202, 6), (203, 4), (204, 5);
+>> >>>>>>
+>> >>>>>> GO
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> select top 1 * from Project
+>> >>>>>>
+>> >>>>>> select top 1 * from Department
+>> >>>>>>
+>> >>>>>> select top 1* from Employee
+>> >>>>>>
+>> >>>>>> select top 1 * from ProjectTeamMember
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> --1. Find the list of employees for department “Information
+>> >>>>>> technology”
+>> >>>>>> select EmployeeName, dp.DepartmentName from Employee as emp left
+>> join
+>> >>>>>> Department as dp
+>> >>>>>> on emp.DepartmentID = dp.DepartmentID
+>> >>>>>> where dp.DepartmentID=111
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>  select EmployeeName from Employee
+>> >>>>>>  where DepartmentID in (select DepartmentID from department where
+>> >>>>>> DepartmentName = 'it')
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> --2. Find the list of employees and department with ordering of
+>> >>>>>> department and the employee
+>> >>>>>>
+>> >>>>>> select EmployeeName, dp.DepartmentName from Employee as emp left
+>> join
+>> >>>>>> Department as dp
+>> >>>>>> on emp.DepartmentID = dp.DepartmentID
+>> >>>>>> order by dp.DepartmentID
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> select EmployeeName, (select departmentName from department as dp
+>> >>>>>> where emp.DepartmentID = dp.DepartmentID) as depart from Employee
+>> >>>>>> as
+>> >>>>>> emp
+>> >>>>>> order by Depart
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> --3. Find the list of project and no of employee works.
+>> >>>>>> select EmployeeID from ProjectTeamMember as pm
+>> >>>>>> left join Project as dp on dp.projectid =pm.ProjectID
+>> >>>>>> where pm.ProjectID is null
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>  select EmployeeID from ProjectTeamMember
+>> >>>>>>  where projectid not in (select ProjectID from Project)
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> --4. Find which project has Max number of employees and how many
+>> >>>>>> employees
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> select MAX(DepartmentID) as Mx,count(emp.EmployeeID) as
+>> >>>>>> NumberofEmp,
+>> >>>>>> emp.DepartmentID from Employee as emp inner join ProjectTeamMember
+>> as
+>> >>>>>> dp on
+>> >>>>>> dp.employeeID = emp.employeeID
+>> >>>>>> group by emp.DepartmentID
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> --5. Find which department has max number of employees
+>> >>>>>>
+>> >>>>>> select employee.DepartmentID, count(employee.EmployeeID)
+>> >>>>>> from employee left join ProjectTeamMember
+>> >>>>>> on employee.EmployeeID = ProjectTeamMember.EmployeeID
+>> >>>>>> group by  employee.DepartmentID
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> --6. List the name of employees who are working on Banking project
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> select EmployeeName from employee left join ProjectTeamMember
+>> >>>>>> on ProjectTeamMember.EmployeeID =employee.EmployeeID
+>> >>>>>> inner join project on Project.ProjectID =
+>> ProjectTeamMember.ProjectID
+>> >>>>>> where Project.ProjectName = 'Banking'
+>> >>>>>>
+>> >>>>>> select EmployeeName from Employee
+>> >>>>>> where EmployeeID in (select employeeid from ProjectTeamMember
+>> >>>>>> where
+>> >>>>>> Projectid in (select ProjectID from Project where ProjectName =
+>> >>>>>> 'Banking'
+>> >>>>>> ))
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> --7. Find all employees who have no managers
+>> >>>>>> select EmployeeName from Employee
+>> >>>>>> where Managerid is null
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> --8. Find all employees who are managers
+>> >>>>>>
+>> >>>>>> select em1.EmployeeName from Employee as em1 right join employee
+>> >>>>>> em2
+>> >>>>>> on em1.Employeeid = em2.ManagerID
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> select  * from Project
+>> >>>>>>
+>> >>>>>> select * from Department
+>> >>>>>>
+>> >>>>>> select * from Employee
+>> >>>>>>
+>> >>>>>> select * from ProjectTeamMember
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>>
+>> >>>>>> On 1/14/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>>>>> /*
+>> >>>>>>> 'c:/desktop/users/TSQL.ppt' - find file name and extransion
+>> >>>>>>>
+>> >>>>>>> abs(len('c:/desktop/users/TSQL.ppt') - len(select
+>> >>>>>>> left('c:/desktop/users/TSQL.ppt',
+>> >>>>>>> charindex('.','c:/desktop/users/TSQL.ppt',1))))
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> declare @str varchar(100)
+>> >>>>>>> set @str = 'c:/desktop/users/TSQL.ppt'
+>> >>>>>>> select right( @str, charindex( '.', REVERSE(@str),1)-1),
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>  substring( right(@str,charindex('/',reverse(@str))-1), 0,
+>> >>>>>>> charindex(
+>> >>>>>>> '.', REVERSE(@str))+1)
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> Declare @Str varchar(100)
+>> >>>>>>> set @str =  'TSQL is ''Microsft instroduced'' langugae'
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> select substring( @str,charindex('''', @str),charindex('''',@str,
+>> >>>>>>> charindex('''', @str)+1)-charindex('''', @str)+1)
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> create rule passwd
+>> >>>>>>> as
+>> >>>>>>>         len(@var)>= 10 and @var like '%[@,#,$,^,&,*]%' and @var
+>> like
+>> >>>>>>> '%[0-9]%' ----one digit and one special charater and 10 or more
+>> char
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> exec sp_bindrule passwd, 'table1.passwd'
+>> >>>>>>>
+>> >>>>>>> insert into table1 values('a12345')
+>> >>>>>>> select*from table1
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> CReate table table1
+>> >>>>>>> (
+>> >>>>>>> passwd varchar(50)
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>  )
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>  create rule stringy --only one letter only
+>> >>>>>>>  as
+>> >>>>>>>         @stg like '%[a-z]%' and @stg not like  '%[a-z]%[a-z]%'
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> exec sp_bindrule stringy, 'table1.passwd'
+>> >>>>>>>
+>> >>>>>>> Declare @fn varchar(30)
+>> >>>>>>> Declare @ln varchar(30)
+>> >>>>>>> set @fn = 'Craig'
+>> >>>>>>> set @ln = 'Dyer'
+>> >>>>>>> select 'my name is ' + @fn +' '+ @ln
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> create table email
+>> >>>>>>> (
+>> >>>>>>> id int primary key IDENTITY(1,1),
+>> >>>>>>> firstname varchar(50),
+>> >>>>>>> lastname varchar(50),
+>> >>>>>>> email varchar(100)
+>> >>>>>>> )
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> alter table email
+>> >>>>>>> add constraint CK_firstname check(email not like
+>> >>>>>>> '%'+firstname+'%'
+>> >>>>>>> and
+>> >>>>>>> email not like '%'+lastname+'%')
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> insert into email values('Craig','Dyer', 'efjwlefjew')
+>> >>>>>>> select* from email
+>> >>>>>>>
+>> >>>>>>> --datediff(interval, start date , enddate)
+>> >>>>>>> select dateadd(,,)
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> select* from HumanResources.employee
+>> >>>>>>> where datename(weekday,HireDate) = 'Monday' and
+>> >>>>>>> datename(weekday,BirthDate) = 'Sunday'
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> select top 1 year(birthdate) as 'Year of Birth', count(*) as cnt
+>> >>>>>>> from
+>> >>>>>>> HumanResources.employee
+>> >>>>>>> group by year( birthdate)
+>> >>>>>>> order by cnt desc
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> select* from HumanResources.employee
+>> >>>>>>> where datediff(year,birthdate, getdate()) between 30 and 40
+>> >>>>>>>
+>> >>>>>>> select top 0  BusinessEntityID, Jobtitle, birthdate  into
+>> >>>>>>> copyofemployee from AdventureWorks2012.HumanResources.employee
+>> >>>>>>> where 0=1
+>> >>>>>>>
+>> >>>>>>> drop table copyofemployee
+>> >>>>>>> select* from copyofemployee
+>> >>>>>>> select sp_help copyofemployee
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> */
+>> >>>>>>>
+>> >>>>>>> /*
+>> >>>>>>>
+>> >>>>>>> create table MyEmpTable
+>> >>>>>>> (
+>> >>>>>>> BID int,
+>> >>>>>>> JobTitle varchar(50),
+>> >>>>>>> birthdate date
+>> >>>>>>> )
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> insert into MyEmpTable
+>> >>>>>>> select top 0  BusinessEntityID, Jobtitle, birthdate  from
+>> >>>>>>> AdventureWorks2012.HumanResources.employee
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> use AdventureWorks2012
+>> >>>>>>>
+>> >>>>>>> select max(totaldue) as 'total sales'  from
+>> >>>>>>> sales.salesorderheader
+>> >>>>>>>
+>> >>>>>>> select salesorderid, customerid, salespersonid, totaldue from
+>> >>>>>>> sales.SalesOrderHeader
+>> >>>>>>>
+>> >>>>>>> select AVG(totaldue) from sales.SalesOrderHeader
+>> >>>>>>> --order by totaldue desc
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> select customerid, sum(totaldue) as 'Total bill' from
+>> >>>>>>> sales.SalesOrderHeader
+>> >>>>>>> group by CustomerID
+>> >>>>>>> having sum(totaldue) > 5000
+>> >>>>>>> Order by CustomerID
+>> >>>>>>>
+>> >>>>>>> select AVG(totaldue) from sales.SalesOrderHeader
+>> >>>>>>> group by customerid
+>> >>>>>>>
+>> >>>>>>> create table project_emp (
+>> >>>>>>> eid int,
+>> >>>>>>> ename varchar(100),
+>> >>>>>>> project varchar(100),
+>> >>>>>>> salary money
+>> >>>>>>> )
+>> >>>>>>>
+>> >>>>>>> insert into project_emp values (1,'Mahsa','P1',100),
+>> >>>>>>> (2,'Harsh','P1',120),(3,'Xin','P2',110),
+>> >>>>>>> (4,'Syed','P2',150),(5,'Craig','p3',150)
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> select sum(salary) as totalsal, project from project_emp
+>> >>>>>>> where salary > 100
+>> >>>>>>> group by project
+>> >>>>>>> having sum(salary) > 200
+>> >>>>>>> order by totalsal desc
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> select max(TotalDue), AVG(TotalDue), MIN(TotalDue), SUM(TotalDue)
+>> >>>>>>> from
+>> >>>>>>> sales.SalesOrderHeader
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> select top 100 percent  customerid, sum(totaldue) as 'Total
+>> customer
+>> >>>>>>> spent'  from sales.SalesOrderHeader
+>> >>>>>>> where customerid between 29000 and 30000
+>> >>>>>>> group by CustomerID
+>> >>>>>>> having sum(totaldue) > 500000
+>> >>>>>>> order by sum(totaldue) desc
+>> >>>>>>>
+>> >>>>>>> select SalesOrderID, convert(varchar, OrderDate,9)
+>> ,convert(varchar,
+>> >>>>>>> DueDate,108), convert(varchar, ShipDate,111) from
+>> >>>>>>> sales.SalesOrderHeader
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> select ShipMethodID, count(ShipMethodID) as ShipM from
+>> >>>>>>> sales.SalesOrderHeader
+>> >>>>>>> where Year(OrderDate)=2005
+>> >>>>>>> group by ShipMethodID
+>> >>>>>>> order ShipM desc
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> -- BEID, Jobtitle,birthdate,age, hiredate, daysofexp for all
+>> >>>>>>> employees
+>> >>>>>>>  -- and sort by their seniority in daysofexp
+>> >>>>>>>  -- HIRE DATE format March Thursday 08-2018 (Quarter 1)
+>> >>>>>>>
+>> >>>>>>> select BusinessEntityID, JobTitle, BirthDate,datediff(year,
+>> >>>>>>> BirthDate,
+>> >>>>>>> getdate()) as Age,
+>> >>>>>>> concat( datename(Month, HireDate),  ' ' ,datename(weekday,
+>> >>>>>>> HireDate),
+>> >>>>>>> ' ' ,  datepart(day, HireDate),'-', datepart(year , HireDate), '
+>> >>>>>>> (
+>> >>>>>>> Quarter: ',datepart(quarter,hiredate),')') as HireDate,
+>> >>>>>>> datediff(day,
+>> >>>>>>> HireDate, getdate()) as Ex from HumanResources.Employee
+>> >>>>>>>  order by Ex desc
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>  select Orderdate, Count(Salesorderid) from
+>> >>>>>>> sales.SalesOrderHeader
+>> >>>>>>>  group by OrderDate
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>   exec sp_helptext sp_columns
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>  exec sp_rename 'Client.Cname', 'Fullname';
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>  select*from client  */
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>  use AdventureWorks2012
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>>
+>> >>>>>>> On 1/14/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>>>>>> select * from HumanResources.Employee
+>> >>>>>>>> select* from person.person
+>> >>>>>>>>
+>> >>>>>>>>
+>> >>>>>>>> select PP.BusinessEntityID, HE.BusinessEntityID from
+>> >>>>>>>> HumanResources.Employee as HE inner join Person.Person as PP
+>> >>>>>>>> on HE.BusinessEntityID = PP.BusinessEntityID
+>> >>>>>>>>
+>> >>>>>>>>
+>> >>>>>>>> select PP.BusinessEntityID, HE.BusinessEntityID from
+>> >>>>>>>> HumanResources.Employee as HE full outer join Person.Person as
+>> >>>>>>>> PP
+>> >>>>>>>> on HE.BusinessEntityID = PP.BusinessEntityID
+>> >>>>>>>>
+>> >>>>>>>>
+>> >>>>>>>> select PP.BusinessEntityID, HE.BusinessEntityID from
+>> >>>>>>>> HumanResources.Employee as HE left join Person.Person as PP
+>> >>>>>>>> on HE.BusinessEntityID = PP.BusinessEntityID
+>> >>>>>>>>
+>> >>>>>>>>
+>> >>>>>>>>
+>> >>>>>>>> select PP.BusinessEntityID, HE.BusinessEntityID from
+>> >>>>>>>> HumanResources.Employee as HE right join Person.Person as PP
+>> >>>>>>>> on HE.BusinessEntityID = PP.BusinessEntityID
+>> >>>>>>>> where PP.BusinessEntityID is not null
+>> >>>>>>>> order by PP.BusinessEntityID
+>> >>>>>>>>
+>> >>>>>>>> On 1/12/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>>>>>>> On 1/12/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>>>>>>>> --Alll Statements
+>> >>>>>>>>>>
+>> >>>>>>>>>> Create Database Homework
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>> use Homework
+>> >>>>>>>>>>
+>> >>>>>>>>>> create table states
+>> >>>>>>>>>> (
+>> >>>>>>>>>>
+>> >>>>>>>>>> statesAbbr char(2) not null,
+>> >>>>>>>>>> stateName varchar(20) not null
+>> >>>>>>>>>> )
+>> >>>>>>>>>>
+>> >>>>>>>>>> Alter table states
+>> >>>>>>>>>> Add constraint PK_STID primary key(statesAbbr)
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  CReate table City
+>> >>>>>>>>>>  (
+>> >>>>>>>>>>
+>> >>>>>>>>>>  cityID char(4) not null, --pk
+>> >>>>>>>>>>  cityName varchar(25) not null,
+>> >>>>>>>>>>  stateAbbr char(2) --fk
+>> >>>>>>>>>>
+>> >>>>>>>>>>  )
+>> >>>>>>>>>>
+>> >>>>>>>>>>  Alter table city
+>> >>>>>>>>>>  Add constraint PK_cityID Primary Key(cityID), Foreign
+>> >>>>>>>>>> Key(stateAbbr)
+>> >>>>>>>>>> references states(statesAbbr)
+>> >>>>>>>>>>
+>> >>>>>>>>>>  --method 2
+>> >>>>>>>>>>  CReate table Airport
+>> >>>>>>>>>>  (
+>> >>>>>>>>>>
+>> >>>>>>>>>>  airportID Char(3) primary key,
+>> >>>>>>>>>>  airportName varchar(40) not null Unique,
+>> >>>>>>>>>>  cityID char(4) not null
+>> >>>>>>>>>>  )
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  Create table FlightRoute
+>> >>>>>>>>>>  (
+>> >>>>>>>>>>  flightNumber char(8) Primary Key,
+>> >>>>>>>>>>  departAirport char(3) not null foreign key references
+>> >>>>>>>>>> Airport(airportID),
+>> >>>>>>>>>>  arriveAirport char(3) not null foreign key references
+>> >>>>>>>>>> Airport(airportID),
+>> >>>>>>>>>>  scheduledDepartTime time not null,
+>> >>>>>>>>>>  scheduleArrivalTime time not null
+>> >>>>>>>>>>
+>> >>>>>>>>>>  )
+>> >>>>>>>>>>  ----------------------------------------------
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  Create table [Status] --change method 3
+>> >>>>>>>>>>  ( statusID char(1) not null ,
+>> >>>>>>>>>>  [description] varchar(10),
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  constraint ck_statid1 check(statusID in ('o','d','c')),
+>> >>>>>>>>>> Primary
+>> >>>>>>>>>> Key(statusID)
+>> >>>>>>>>>>
+>> >>>>>>>>>>  )
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> -------------------------------------------------------------------------
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  create table FlightSchedule
+>> >>>>>>>>>>  (
+>> >>>>>>>>>>
+>> >>>>>>>>>>  flightNumber Char(8) not null Primary Key,
+>> >>>>>>>>>>  flightDate Date not null,-- Primary Key,
+>> >>>>>>>>>>  statusID char(1) foreign key references [Status](statusID),
+>> >>>>>>>>>>  airplaneID char(8) foreign key references
+>> >>>>>>>>>> FlightRoute(flightNumber),
+>> >>>>>>>>>> ---changed char(8) to char(4) to fix error maybe incorrect fk
+>> >>>>>>>>>>  delayDepartTime time,
+>> >>>>>>>>>>  delayArrivalTime time
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  constraint FK_flNum1 foreign key(flightNumber) references
+>> >>>>>>>>>> FlightRoute(flightNumber)
+>> >>>>>>>>>>  )
+>> >>>>>>>>>>
+>> -----------------------------------------------------------------------------------
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  --method 3
+>> >>>>>>>>>>
+>> >>>>>>>>>>  Create table AircraftSpecs
+>> >>>>>>>>>>  (
+>> >>>>>>>>>>   aircraftTypeID char(4) not null,
+>> >>>>>>>>>>   aircraftVersion varchar(10) not null,
+>> >>>>>>>>>>   cabunNumOfSeats int,
+>> >>>>>>>>>>   fuelCapacity int not null
+>> >>>>>>>>>>
+>> >>>>>>>>>>  constraint PK_AirSpecs Primary key(aircraftTypeID)
+>> >>>>>>>>>>  )
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  create table Airplane
+>> >>>>>>>>>>  (
+>> >>>>>>>>>>  airplane char(8) not null, --primary key,
+>> >>>>>>>>>>  aircraftTypeID char(4) not null, --foreign key
+>> >>>>>>>>>>  purchaseDate date  not null
+>> >>>>>>>>>>  constraint PK_apl primary key(airplane), foreign
+>> >>>>>>>>>> key(aircraftTypeID)
+>> >>>>>>>>>> references AircraftSpecs(aircraftTypeID)
+>> >>>>>>>>>>  )
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> -----------------------------------------------------------------------------
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  insert into states values('CA', 'California'),('DC',
+>> >>>>>>>>>> 'Washington,
+>> >>>>>>>>>> D.C.'),('FL', 'Florida'),('IL', 'Illinois'),('MA',
+>> >>>>>>>>>> 'Massachusetts'),('NY', 'New York'),('TX', 'Texas')
+>> >>>>>>>>>>
+>> >>>>>>>>>>  insert into city values('C001','Los
+>> >>>>>>>>>> Angeles','CA'),('C002','San
+>> >>>>>>>>>> Francisco','CA'),('C003','Washington.
+>> >>>>>>>>>>
+>> D.C.','DC'),('C004','Miami','FL'),('C005','Orlando','FL'),('C006','Chicago','IL'),('C007','Boston','MA'),
+>> >>>>>>>>>>  ('C008','New York','NY'),('C009','Syracuse','NY')
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  insert into airport values('BOS','Edward Logan International
+>> >>>>>>>>>> Airport','C007'),('DCA','Ronald Reagan National
+>> >>>>>>>>>> Airport','C003'),('IAD','Washington Dulles International
+>> >>>>>>>>>> Airport','C003'),('JFK','John F. Kennedy International
+>> >>>>>>>>>> Airport','C008'),('LAX','Los Angeles International
+>> >>>>>>>>>> Airport','C001'),('LGA','LaGuardia
+>> >>>>>>>>>> Airport','C008'),('MCO','Orlando
+>> >>>>>>>>>> International Airport','C005'),('MDW','Miami International
+>> >>>>>>>>>> Airport','C006'),
+>> >>>>>>>>>>  ('ORD','Chcago OHare International
+>> >>>>>>>>>> Airport','C006'),('SFO','San
+>> >>>>>>>>>> Francisco International Airport','C002'),('SYR','Syracuse
+>> Hancock
+>> >>>>>>>>>> International Airport','C009')
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  select* from FlightRoute
+>> >>>>>>>>>>
+>> >>>>>>>>>>  ----------emailed above 250pm
+>> >>>>>>>>>>  insert into FlightRoute
+>> >>>>>>>>>>  values(3310, 'SYR','JFK',
+>> >>>>>>>>>> '08:00:00.0000000','09:02:00.0000000'),
+>> >>>>>>>>>>  (3312, 'JFK','SYR', '12:20:00.0000000','13:30:00.0000000'),
+>> >>>>>>>>>>  (3426, 'LAX','ORD', '11:15:00.0000000','15:05:00.0000000'),
+>> >>>>>>>>>>  (5063, 'BOS','MCO', '14:30:00.0000000','18:45:00.0000000')
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  insert into STatus
+>> >>>>>>>>>>  values('C', 'Cancelled'),
+>> >>>>>>>>>>  ('D', 'Delay'),
+>> >>>>>>>>>>  ('O', 'On Time')
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  Insert into AircraftSpecs
+>> >>>>>>>>>>  Values('AIR1','A321-200', 220,7930 ),('AIR2','737-600ER',132
+>> >>>>>>>>>> ,6875
+>> >>>>>>>>>> ),('BOE1','747-400ER',416 ,63705 ),('BOE2','767-300ER',350
+>> ,23980
+>> >>>>>>>>>> ),('BOE3','737-600ER',132 ,6875 )
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>>  insert into Airplane
+>> >>>>>>>>>>
+>> values('AP098640','AIR2','2013-03-01'),('AP239471','AIR1','1900-01-01'),('AP309814','BOE2','2012-05-22'),
+>> >>>>>>>>>>
+>> ('AP629342','BOE1','1900-01-01'),('AP872139','BOE3','1900-01-01'),('AP998911','BOE2','1900-01-01')
+>> >>>>>>>>>>
+>> >>>>>>>>>>  ---emailed
+>> >>>>>>>>>>  select* from FLightSchedule
+>> >>>>>>>>>>  insert into FLightSchedule
+>> >>>>>>>>>>  values(3310,'2014-02-10', 'O', 'AP629342', Null, Null),
+>> >>>>>>>>>>  (3310,'2014-02-11', 'O', 'AP629342', Null, Null),
+>> >>>>>>>>>>  (3312,'2014-02-10', 'O', 'AP872139', Null, Null),
+>> >>>>>>>>>>  (3426,'2014-02-12', 'O', 'AP239471', Null, Null),
+>> >>>>>>>>>>  (5063,'2014-02-13', 'D', 'AP309814', '15:40:00.0000000',
+>> >>>>>>>>>> '20:05:00.0000000')
+>> >>>>>>>>>>
+>> >>>>>>>>>>  select* from FLightSchedule
+>> >>>>>>>>>>  select*from flightroute
+>> >>>>>>>>>>
+>> >>>>>>>>>> On 1/12/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>>>>>>>>>  select* from FLightSchedule
+>> >>>>>>>>>>>  insert into FLightSchedule
+>> >>>>>>>>>>>  values(3310,'2014-02-10', 'O', 'AP629342', Null, Null),
+>> >>>>>>>>>>>  (3310,'2014-02-11', 'O', 'AP629342', Null, Null),
+>> >>>>>>>>>>>  (3312,'2014-02-10', 'O', 'AP872139', Null, Null),
+>> >>>>>>>>>>>  (3426,'2014-02-12', 'O', 'AP239471', Null, Null),
+>> >>>>>>>>>>>  (5063,'2014-02-13', 'D', 'AP309814', '15:40:00.0000000',
+>> >>>>>>>>>>> '20:05:00.0000000')
+>> >>>>>>>>>>>
+>> >>>>>>>>>>> On 1/12/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>>>>>>>>>>  insert into FlightRoute
+>> >>>>>>>>>>>>  values(3310, 'SYR','JFK',
+>> >>>>>>>>>>>> '08:00:00.0000000','09:02:00.0000000'),
+>> >>>>>>>>>>>>  (3312, 'JFK','SYR', '12:20:00.0000000','13:30:00.0000000'),
+>> >>>>>>>>>>>>  (3426, 'LAX','ORD', '11:15:00.0000000','15:05:00.0000000'),
+>> >>>>>>>>>>>>  (5063, 'BOS','MCO', '14:30:00.0000000','18:45:00.0000000')
+>> >>>>>>>>>>>>
+>> >>>>>>>>>>>>
+>> >>>>>>>>>>>>  insert into STatus
+>> >>>>>>>>>>>>  values('C', 'Cancelled'),
+>> >>>>>>>>>>>>  ('D', 'Delay'),
+>> >>>>>>>>>>>>  ('O', 'On Time')
+>> >>>>>>>>>>>>
+>> >>>>>>>>>>>>
+>> >>>>>>>>>>>>
+>> >>>>>>>>>>>>  Insert into AircraftSpecs
+>> >>>>>>>>>>>>  Values('AIR1','A321-200', 220,7930
+>> >>>>>>>>>>>> ),('AIR2','737-600ER',132
+>> >>>>>>>>>>>> ,6875
+>> >>>>>>>>>>>> ),('BOE1','747-400ER',416 ,63705 ),('BOE2','767-300ER',350
+>> >>>>>>>>>>>> ,23980
+>> >>>>>>>>>>>> ),('BOE3','737-600ER',132 ,6875 )
+>> >>>>>>>>>>>>
+>> >>>>>>>>>>>>
+>> >>>>>>>>>>>>
+>> >>>>>>>>>>>>
+>> >>>>>>>>>>>>  insert into Airplane
+>> >>>>>>>>>>>>
+>> values('AP098640','AIR2','2013-03-01'),('AP239471','AIR1','1900-01-01'),('AP309814','BOE2','2012-05-22'),
+>> >>>>>>>>>>>>
+>> ('AP629342','BOE1','1900-01-01'),('AP872139','BOE3','1900-01-01'),('AP998911','BOE2','1900-01-01')
+>> >>>>>>>>>>>>
+>> >>>>>>>>>>>>
+- Hide quoted text -
+>> >>>>>>>>>>>> On 1/12/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>>>>>>>>>>> insert into states values('CA', 'California'),('DC',
+>> >>>>>>>>>>>>> 'Washington,
+>> >>>>>>>>>>>>> D.C.'),('FL', 'Florida'),('IL', 'Illinois'),('MA',
+>> >>>>>>>>>>>>> 'Massachusetts'),('NY', 'New York'),('TX', 'Texas')
+>> >>>>>>>>>>>>>
+>> >>>>>>>>>>>>>  insert into city values('C001','Los
+>> >>>>>>>>>>>>> Angeles','CA'),('C002','San
+>> >>>>>>>>>>>>> Francisco','CA'),('C003','Washington.
+>> >>>>>>>>>>>>>
+>> D.C.','DC'),('C004','Miami','FL'),('C005','Orlando','FL'),('C006','Chicago','IL'),('C007','Boston','MA'),
+>> >>>>>>>>>>>>>  ('C008','New York','NY'),('C009','Syracuse','NY')
+>> >>>>>>>>>>>>>
+>> >>>>>>>>>>>>>
+>> >>>>>>>>>>>>>  insert into airport values('BOS','Edward Logan
+>> >>>>>>>>>>>>> International
+>> >>>>>>>>>>>>> Airport','C007'),('DCA','Ronald Reagan National
+>> >>>>>>>>>>>>> Airport','C003'),('IAD','Washington Dulles International
+>> >>>>>>>>>>>>> Airport','C003'),('JFK','John F. Kennedy International
+>> >>>>>>>>>>>>> Airport','C008'),('LAX','Los Angeles International
+>> >>>>>>>>>>>>> Airport','C001'),('LGA','LaGuardia
+>> >>>>>>>>>>>>> Airport','C008'),('MCO','Orlando
+>> >>>>>>>>>>>>> International Airport','C005'),('MDW','Miami International
+>> >>>>>>>>>>>>> Airport','C006'),
+>> >>>>>>>>>>>>>  ('ORD','Chcago OHare International
+>> >>>>>>>>>>>>> Airport','C006'),('SFO','San
+>> >>>>>>>>>>>>> Francisco International Airport','C002'),('SYR','Syracuse
+>> >>>>>>>>>>>>> Hancock
+>> >>>>>>>>>>>>> International Airport','C009')
+>> >>>>>>>>>>>>>
+>> >>>>>>>>>>>>>
+>> >>>>>>>>>>>>>
+>> >>>>>>>>>>>>> On 1/12/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>>>>>>>>>>>> use homework
+- Hide quoted text -
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>> create table states
+>> >>>>>>>>>>>>>> (
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>> statesAbbr char(2) not null,
+>> >>>>>>>>>>>>>> stateName varchar(20) not null
+>> >>>>>>>>>>>>>> )
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>> Alter table states
+>> >>>>>>>>>>>>>> Add constraint PK_STID primary key(statesAbbr)
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  CReate table City
+>> >>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  cityID char(4) not null, --pk
+>> >>>>>>>>>>>>>>  cityName varchar(25) not null,
+>> >>>>>>>>>>>>>>  stateAbbr char(2) --fk
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  Alter table city
+>> >>>>>>>>>>>>>>  Add constraint PK_cityID Primary Key(cityID), Foreign
+>> >>>>>>>>>>>>>> Key(stateAbbr)
+>> >>>>>>>>>>>>>> references states(statesAbbr)
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  --method 2
+>> >>>>>>>>>>>>>>  CReate table Airport
+>> >>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  airportID Char(3) primary key,
+>> >>>>>>>>>>>>>>  airportName varchar(40) not null Unique,
+>> >>>>>>>>>>>>>>  cityID char(4) not null
+>> >>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  Create table FlightRoute
+>> >>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>  flightNumber char(4) Primary Key,
+>> >>>>>>>>>>>>>>  departAirport char(3) not null foreign key references
+>> >>>>>>>>>>>>>> Airport(airportID),
+>> >>>>>>>>>>>>>>  arriveAirport char(3) not null foreign key references
+>> >>>>>>>>>>>>>> Airport(airportID),
+>> >>>>>>>>>>>>>>  scheduledDepartTime time not null,
+>> >>>>>>>>>>>>>>  scheduleArrivalTime time not null
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>  ----------------------------------------------
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  Drop Table [Status]
+>> >>>>>>>>>>>>>>  Create table [Status] --change method 3
+>> >>>>>>>>>>>>>>  ( statusID char(1) not null ,
+>> >>>>>>>>>>>>>>  [description] varchar(10),
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  constraint ck_statid1 check(statusID in ('o','d','c')),
+>> >>>>>>>>>>>>>> Primary
+>> >>>>>>>>>>>>>> Key(statusID)
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> -------------------------------------------------------------------------
+>> >>>>>>>>>>>>>>  create table FligthSchedule
+>> >>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  flightNumber Char(4) not null Primary Key,
+>> >>>>>>>>>>>>>>  flightDate Date not null,-- Primary Key,
+>> >>>>>>>>>>>>>>  statusID char(1) foreign key references
+>> >>>>>>>>>>>>>> [Status](statusID),
+>> >>>>>>>>>>>>>>  airplaneID char(4) foreign key references
+>> >>>>>>>>>>>>>> FlightRoute(flightNumber),
+>> >>>>>>>>>>>>>> ---changed char(8) to char(4) to fix error maybe incorrect
+>> fk
+>> >>>>>>>>>>>>>>  delayDepartTime time,
+>> >>>>>>>>>>>>>>  delayArrivalTime time
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  constraint FK_flNum foreign key(flightNumber) references
+>> >>>>>>>>>>>>>> FlightRoute(flightNumber)
+>> >>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>
+>> -----------------------------------------------------------------------------------
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  --method 3
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  Create table AircraftSpecs
+>> >>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>   aircraftTypeID char(4) not null,
+>> >>>>>>>>>>>>>>   aircraftVersion varchar(10) not null,
+>> >>>>>>>>>>>>>>   cabunNumOfSeats int,
+>> >>>>>>>>>>>>>>   fuelCapacity int not null
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  constraint PK_AirSpecs Primary key(aircraftTypeID)
+>> >>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>  create table Airplane
+>> >>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>  airplane char(8) not null, --primary key,
+>> >>>>>>>>>>>>>>  aircraftTypeID char(4) not null, --foreign key
+>> >>>>>>>>>>>>>>  purchaseDate date  not null
+>> >>>>>>>>>>>>>>  constraint PK_apl primary key(airplane), foreign
+>> >>>>>>>>>>>>>> key(aircraftTypeID)
+>> >>>>>>>>>>>>>> references AircraftSpecs(aircraftTypeID)
+>> >>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>> On 1/12/19, Craig Dyer <craigpdyer@gmail.com> wrote:
+>> >>>>>>>>>>>>>>> use homework
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>> create table states
+>> >>>>>>>>>>>>>>> (
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>> statesAbbr char(2) not null,
+>> >>>>>>>>>>>>>>> stateName varchar(20) not null
+>> >>>>>>>>>>>>>>> )
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>> Alter table states
+>> >>>>>>>>>>>>>>> Add constraint PK_STID primary key(statesAbbr)
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  CReate table City
+>> >>>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  cityID char(4) not null, --pk
+>> >>>>>>>>>>>>>>>  cityName varchar(25) not null,
+>> >>>>>>>>>>>>>>>  stateAbbr char(2) --fk
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  Alter table city
+>> >>>>>>>>>>>>>>>  Add constraint PK_cityID Primary Key(cityID), Foreign
+>> >>>>>>>>>>>>>>> Key(stateAbbr)
+>> >>>>>>>>>>>>>>> references states(stateAbbr)
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  --method 2
+>> >>>>>>>>>>>>>>>  CReate table Airport
+>> >>>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  airportID Char(3) primary key,
+>> >>>>>>>>>>>>>>>  airportName varchar(40) not null Unique,
+>> >>>>>>>>>>>>>>>  cityID char(4) not null
+>> >>>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  Create table FlightRoute
+>> >>>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>>  flightNumber char(4) Primary Key,
+>> >>>>>>>>>>>>>>>  departAirport char(3) not null foreign key references
+>> >>>>>>>>>>>>>>> Airport(airportID),
+>> >>>>>>>>>>>>>>>  arriveAirport char(3) not null foreign key references
+>> >>>>>>>>>>>>>>> Airport(airportID),
+>> >>>>>>>>>>>>>>>  scheduledDepartTime time not null,
+>> >>>>>>>>>>>>>>>  scheduleArrivalTime time not null
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  Create table [Status] --change method 3
+>> >>>>>>>>>>>>>>>  ( statusID char(1) not null check( statueID in
+>> >>>>>>>>>>>>>>> ['o','d','c']),
+>> >>>>>>>>>>>>>>>  [description] varchar(10)
+>> >>>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  create table FligthSchedule
+>> >>>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  flightNumber Char(4) not null Primary Key,
+>> >>>>>>>>>>>>>>>  flightDate Date not null Primary Key,
+>> >>>>>>>>>>>>>>>  statusID char(1) foreign key references
+>> [Status](statusID),
+>> >>>>>>>>>>>>>>>  airplaneID char(8) foreign key references
+>> >>>>>>>>>>>>>>> FlightRoute(flightNumber),
+>> >>>>>>>>>>>>>>>  delayDepartTime time,
+>> >>>>>>>>>>>>>>>  delayArrivalTime time
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  constraint FK_flNum foreign key(flightNumber) references
+>> >>>>>>>>>>>>>>> FlightRoute(flightNumber)
+>> >>>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>
+- Hide quoted text -
+>> >>>>>>>>>>>>>>>  --method 3
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  Create table AircraftSpecs
+>> >>>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>>   aircraftTypeID char(4) not null,
+>> >>>>>>>>>>>>>>>   aircraftVersion varchar(10) not null,
+>> >>>>>>>>>>>>>>>   cabunNumOfSeats int,
+>> >>>>>>>>>>>>>>>   fuelCapacity int not null
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  constraint PK_AirSpecs Primary key(aircraftTypeID)
+>> >>>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>>  create table Airplane
+>> >>>>>>>>>>>>>>>  (
+>> >>>>>>>>>>>>>>>  airplane char(8) not null, --primary key,
+>> >>>>>>>>>>>>>>>  aircraftTypeID char(4) not null, --foreign key
+>> >>>>>>>>>>>>>>>  purchaseDate date  not null
+>> >>>>>>>>>>>>>>>  constraint PK_apl primary key(airplane), foreign
+>> >>>>>>>>>>>>>>> key(aircraftTypeID)
+>> >>>>>>>>>>>>>>> references AircraftSpecs(aircraftTypeID)
+>> >>>>>>>>>>>>>>>  )
+>> >>>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>>
+>> >>>>>>>>>>>>>
+>> >>>>>>>>>>>>
+>> >>>>>>>>>>>
+>> >>>>>>>>>>
+>> >>>>>>>>>
+>> >>>>>>>>
+>> >>>>>>>
+>> >>>>>>
+>> >>>>>
+>> >>>>
+>> >>>
+>> >>
+>> >
+>>
